@@ -55,7 +55,7 @@
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Siege social</span>
-                            <p class="text-gray-700 mt-0.5">64 Chemin de Saint-Pardoux<br>63600 Ambert, France</p>
+                            <p class="text-gray-700 mt-0.5">14 Boulevard Henri IV<br>63600 Ambert, France</p>
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Directeur de la publication</span>
@@ -73,7 +73,7 @@
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Code NAF</span>
-                            <p class="text-gray-700 mt-0.5">4639B - Commerce de gros alimentaire</p>
+                            <p class="text-gray-700 mt-0.5">4711C - Epicerie</p>
                         </div>
                         <div>
                             <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Contact</span>

@@ -49,7 +49,7 @@
             <div class="px-6 py-5 text-sm text-gray-600 leading-relaxed">
                 <p>
                     <strong class="text-gray-800">M. Brian Ribeiro</strong> - Entrepreneur individuel<br>
-                    64 Chemin de Saint-Pardoux, 63600 Ambert, France<br>
+                    14 Boulevard Henri IV, 63600 Ambert, France<br>
                     SIRET : <span class="font-mono">903 003 549 00024</span><br>
                     Email : <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline font-medium">contact@epidrive.fr</a>
                 </p>

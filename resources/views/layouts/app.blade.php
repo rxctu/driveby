@@ -281,10 +281,10 @@
                 <div>
                     <h4 class="text-lg font-bold text-white mb-4">⏰ Horaires</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li class="flex justify-between"><span>Lundi - Vendredi</span><span class="text-emerald-400 font-semibold">8h - 21h</span></li>
-                        <li class="flex justify-between"><span>Samedi</span><span class="text-emerald-400 font-semibold">8h - 22h</span></li>
-                        <li class="flex justify-between"><span>Dimanche</span><span class="text-emerald-400 font-semibold">9h - 20h</span></li>
+                        <li class="flex justify-between"><span>Lundi - Samedi</span><span class="text-emerald-400 font-semibold">des 18h</span></li>
+                        <li class="flex justify-between"><span>Dimanche</span><span class="text-emerald-400 font-semibold">des 16h</span></li>
                     </ul>
+                    <p class="text-xs text-gray-500 mt-3">🚚 Livraison Ambert & 15-20km</p>
                 </div>
 
                 {{-- Contact --}}
@@ -292,16 +292,20 @@
                     <h4 class="text-lg font-bold text-white mb-4">📍 Contact</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li class="flex items-center space-x-3">
-                            <span>📞</span>
-                            <span>contact@epidrive.fr</span>
-                        </li>
-                        <li class="flex items-center space-x-3">
                             <span>✉️</span>
                             <span>contact@epidrive.fr</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <span>📍</span>
-                            <span>64 Chemin de Saint-Pardoux, 63600 Ambert</span>
+                            <span>14 Boulevard Henri IV, 63600 Ambert</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <span>📷</span>
+                            <a href="https://www.instagram.com/epidrive63" target="_blank" rel="noopener" class="hover:text-amber-400 transition">@epidrive63</a>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <span>👻</span>
+                            <span>epidrive63</span>
                         </li>
                     </ul>
                 </div>

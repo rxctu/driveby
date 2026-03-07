@@ -44,10 +44,10 @@
             </div>
             <div class="px-6 py-5 text-sm text-gray-600 leading-relaxed">
                 <p>
-                    Les presentes CGV regissent les ventes de produits alimentaires et de consommation courante
+                    Les presentes CGV regissent les ventes de produits alimentaires, boissons, friandises et alcools
                     effectuees sur le site EpiDrive (ci-apres "le Site") par <strong class="text-gray-800">M. Brian Ribeiro</strong>,
                     entrepreneur individuel, SIRET <span class="font-mono">903 003 549 00024</span>,
-                    64 Chemin de Saint-Pardoux, 63600 Ambert (ci-apres "le Vendeur"), aupres de ses clients.
+                    14 Boulevard Henri IV, 63600 Ambert (ci-apres "le Vendeur"), aupres de ses clients.
                 </p>
             </div>
         </div>
