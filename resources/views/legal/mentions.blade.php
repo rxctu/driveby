@@ -12,14 +12,13 @@
             <h2 class="text-xl font-bold text-gray-800">1. Editeur du site</h2>
             <p class="text-gray-600 leading-relaxed">
                 Le site EpiDrive est edite par :<br>
-                <strong>EpiDrive SAS</strong><br>
-                Siege social : 12 Rue du Commerce, 75015 Paris, France<br>
-                SIRET : [A COMPLETER]<br>
-                RCS Paris : [A COMPLETER]<br>
-                Capital social : [A COMPLETER]<br>
-                Directeur de la publication : [A COMPLETER]<br>
-                Telephone : +33 1 23 45 67 89<br>
-                Email : contact@epidrive.fr
+                <strong>M. Brian Ribeiro</strong> - Entrepreneur individuel<br>
+                Siege social : 64 Chemin de Saint-Pardoux, 63600 Ambert, France<br>
+                SIRET : 903 003 549 00024<br>
+                N° TVA intracommunautaire : FR 91 903003549<br>
+                Code NAF : 4639B - Commerce de gros alimentaire non specialise<br>
+                Directeur de la publication : M. Brian Ribeiro<br>
+                Email : <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>
             </p>
         </section>
 
@@ -27,9 +26,12 @@
             <h2 class="text-xl font-bold text-gray-800">2. Hebergement</h2>
             <p class="text-gray-600 leading-relaxed">
                 Le site est heberge par :<br>
-                [A COMPLETER - Nom de l'hebergeur]<br>
-                [Adresse de l'hebergeur]<br>
-                [Telephone de l'hebergeur]
+                <strong>OVHcloud</strong><br>
+                2 rue Kellermann, 59100 Roubaix, France<br>
+                SAS au capital de 10 174 560 EUR<br>
+                RCS Lille Metropole 424 761 419 00045<br>
+                Telephone : +33 9 72 10 10 07<br>
+                <a href="https://www.ovhcloud.com" class="text-emerald-600 hover:underline" target="_blank" rel="noopener">www.ovhcloud.com</a>
             </p>
         </section>
 
@@ -48,8 +50,8 @@
             <p class="text-gray-600 leading-relaxed">
                 Conformement au Reglement General sur la Protection des Donnees (RGPD) et a la loi Informatique et Libertes,
                 vous disposez d'un droit d'acces, de rectification, de portabilite et d'effacement de vos donnees.
-                Pour toute demande, contactez-nous a : <a href="mailto:dpo@epidrive.fr" class="text-emerald-600 hover:underline">dpo@epidrive.fr</a>.<br><br>
-                Delegue a la Protection des Donnees (DPO) : [A COMPLETER]<br>
+                Pour toute demande, contactez-nous a : <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>.<br><br>
+                Responsable du traitement des donnees : M. Brian Ribeiro<br>
                 Pour en savoir plus, consultez notre <a href="{{ route('legal.privacy') }}" class="text-emerald-600 hover:underline">Politique de confidentialite</a>.
             </p>
         </section>

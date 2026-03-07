@@ -12,8 +12,10 @@
         <section>
             <h2 class="text-xl font-bold text-gray-800">1. Responsable du traitement</h2>
             <p class="text-gray-600 leading-relaxed">
-                EpiDrive SAS, 12 Rue du Commerce, 75015 Paris.<br>
-                Email DPO : <a href="mailto:dpo@epidrive.fr" class="text-emerald-600 hover:underline">dpo@epidrive.fr</a>
+                M. Brian Ribeiro - Entrepreneur individuel<br>
+                64 Chemin de Saint-Pardoux, 63600 Ambert, France<br>
+                SIRET : 903 003 549 00024<br>
+                Email : <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>
             </p>
         </section>
 
@@ -21,7 +23,7 @@
             <h2 class="text-xl font-bold text-gray-800">2. Donnees collectees</h2>
             <p class="text-gray-600 leading-relaxed">Nous collectons les donnees suivantes :</p>
             <ul class="list-disc pl-6 text-gray-600 space-y-1">
-                <li><strong>Inscription :</strong> Nom, email, mot de passe (chiffre)</li>
+                <li><strong>Inscription :</strong> Nom, email, telephone (optionnel), mot de passe (chiffre)</li>
                 <li><strong>Commande :</strong> Nom, telephone, adresse de livraison, instructions de livraison</li>
                 <li><strong>Paiement :</strong> Methode de paiement (les donnees bancaires sont traitees exclusivement par Stripe, certifie PCI-DSS)</li>
                 <li><strong>Navigation :</strong> Cookies de session strictement necessaires</li>
@@ -97,9 +99,9 @@
                 @auth
                     Exercez vos droits directement depuis votre
                     <a href="{{ route('account.privacy') }}" class="text-emerald-600 hover:underline">espace personnel</a>
-                    ou contactez notre DPO a <a href="mailto:dpo@epidrive.fr" class="text-emerald-600 hover:underline">dpo@epidrive.fr</a>.
+                    ou contactez notre DPO a <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>.
                 @else
-                    Contactez notre DPO a <a href="mailto:dpo@epidrive.fr" class="text-emerald-600 hover:underline">dpo@epidrive.fr</a>
+                    Contactez notre DPO a <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>
                     ou connectez-vous pour acceder a votre espace de gestion des donnees.
                 @endauth
             </p>

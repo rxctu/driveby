@@ -13,14 +13,16 @@
             <h2 class="text-xl font-bold text-gray-800">1. Objet</h2>
             <p class="text-gray-600 leading-relaxed">
                 Les presentes CGV regissent les ventes de produits alimentaires et de consommation courante
-                effectuees sur le site EpiDrive (ci-apres "le Site") par EpiDrive SAS aupres de ses clients.
+                effectuees sur le site EpiDrive (ci-apres "le Site") par M. Brian Ribeiro, entrepreneur individuel,
+                SIRET 903 003 549 00024, 64 Chemin de Saint-Pardoux, 63600 Ambert (ci-apres "le Vendeur"), aupres de ses clients.
             </p>
         </section>
 
         <section>
             <h2 class="text-xl font-bold text-gray-800">2. Prix</h2>
             <p class="text-gray-600 leading-relaxed">
-                Les prix sont indiques en euros TTC. EpiDrive se reserve le droit de modifier ses prix a tout moment.
+                Les prix sont indiques en euros TTC (TVA intracommunautaire : FR 91 903003549).
+                Le Vendeur se reserve le droit de modifier ses prix a tout moment.
                 Les produits sont factures au prix en vigueur au moment de la validation de la commande.
             </p>
         </section>
@@ -63,8 +65,7 @@
             <h2 class="text-xl font-bold text-gray-800">7. Reclamations</h2>
             <p class="text-gray-600 leading-relaxed">
                 Pour toute reclamation, contactez notre service client a
-                <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>
-                ou au +33 1 23 45 67 89.
+                <a href="mailto:contact@epidrive.fr" class="text-emerald-600 hover:underline">contact@epidrive.fr</a>.
             </p>
         </section>
 
@@ -80,7 +81,7 @@
         <section>
             <h2 class="text-xl font-bold text-gray-800">9. Droit applicable</h2>
             <p class="text-gray-600 leading-relaxed">
-                Les presentes CGV sont soumises au droit francais. En cas de litige, les tribunaux de Paris seront competents.
+                Les presentes CGV sont soumises au droit francais. En cas de litige, les tribunaux competents du ressort du siege social du Vendeur seront competents.
             </p>
         </section>
     </div>
