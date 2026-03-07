@@ -60,6 +60,12 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          mkdir -p storage/framework/{views,sessions,cache} storage/logs bootstrap/cache
+          php artisan key:generate
+
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=512M
 
@@ -118,6 +124,8 @@ jobs:
           sed -i 's/DB_USERNAME=.*/DB_USERNAME=epidrive/' .env
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=testing/' .env
           sed -i 's/REDIS_HOST=.*/REDIS_HOST=127.0.0.1/' .env
+          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
+          sed -i 's/SESSION_SECURE_COOKIE=.*/SESSION_SECURE_COOKIE=false/' .env
           mkdir -p storage/framework/{views,sessions,cache,testing} storage/logs bootstrap/cache
           php artisan key:generate
 

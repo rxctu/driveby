@@ -94,8 +94,8 @@ jobs:
           exit-code: '1'
           scanners: 'vuln,secret,misconfig'
 
-  trivy-docker:
-    name: Trivy Docker Image Scan
+  trivy-docker-app:
+    name: Trivy - App Image (Alpine + PHP)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -103,13 +103,58 @@ jobs:
       - name: Build Docker image
         run: docker build -t epidrive-app:ci .
 
-      - name: Scan Docker image for CVEs
+      - name: Scan App image for CVEs
         uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: 'epidrive-app:ci'
           format: 'table'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
+          scanners: 'vuln'
+
+  trivy-docker-nginx:
+    name: Trivy - Nginx Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Scan Nginx image for CVEs
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: 'nginx:alpine'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          scanners: 'vuln'
+
+  trivy-docker-postgres:
+    name: Trivy - PostgreSQL Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Scan PostgreSQL image for CVEs
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: 'postgres:17-alpine'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+          scanners: 'vuln'
+
+  trivy-docker-redis:
+    name: Trivy - Redis Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Scan Redis image for CVEs
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: 'redis:7-alpine'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
           scanners: 'vuln'
 
   secret-scan:
