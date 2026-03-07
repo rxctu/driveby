@@ -19,6 +19,7 @@ class SettingController extends Controller
             'address' => Setting::getValue('contact_address', ''),
             'opening_hours' => json_decode(Setting::getValue('opening_hours', '{}'), true) ?: [],
             'banner_texts' => json_decode(Setting::getValue('banner_texts', ''), true) ?: [],
+            'partner_cta_enabled' => Setting::getValue('partner_cta_enabled', '1'),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -33,6 +34,7 @@ class SettingController extends Controller
             'address' => 'nullable|string|max:500',
             'opening_hours' => 'nullable|array',
             'banner_texts' => 'nullable|array',
+            'partner_cta_enabled' => 'nullable|boolean',
         ]);
 
         Setting::setValue('store_name', $validated['store_name']);
@@ -47,6 +49,8 @@ class SettingController extends Controller
         if (isset($validated['banner_texts'])) {
             Setting::setValue('banner_texts', json_encode(array_values($validated['banner_texts'])));
         }
+
+        Setting::setValue('partner_cta_enabled', $request->has('partner_cta_enabled') ? '1' : '0');
 
         return back()->with('success', 'Parametres mis a jour avec succes.');
     }

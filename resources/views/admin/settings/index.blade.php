@@ -143,6 +143,24 @@
                     </div>
                 </div>
 
+                {{-- Partner CTA toggle --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Page Partenaires</label>
+                    <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="hidden" name="partner_cta_enabled" value="0">
+                            <input type="checkbox" name="partner_cta_enabled" value="1"
+                                   class="sr-only peer"
+                                   {{ old('partner_cta_enabled', $settings->partner_cta_enabled ?? '1') == '1' ? 'checked' : '' }}>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Formulaire "Devenir partenaire"</span>
+                            <p class="text-xs text-gray-500">Afficher le bloc de contact commercant sur la page partenaires</p>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Save --}}
                 <div class="pt-4 border-t border-gray-200">
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition">

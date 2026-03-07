@@ -114,7 +114,7 @@
     {{-- ============================================
          NOS PARTENAIRES
          ============================================ --}}
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16"
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20"
              x-data="{ shown: false }" x-intersect.once="shown = true">
         <div class="text-center mb-10" x-show="shown" x-transition.duration.600ms>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">Nos partenaires</h2>
@@ -207,7 +207,8 @@
     {{-- ============================================
          CTA COMMERCANT
          ============================================ --}}
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16"
+    @if(\App\Models\Setting::getValue('partner_cta_enabled', '1') === '1')
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20"
              x-data="{ shown: false }" x-intersect.once="shown = true">
         <div x-show="shown"
              x-transition:enter="transition ease-out duration-700"
@@ -260,5 +261,6 @@
             </div>
         </div>
     </section>
+    @endif
 
 @endsection
