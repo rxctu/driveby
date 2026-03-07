@@ -1,0 +1,91 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  blade-lint:
+    name: Blade Template Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Check Blade templates compile
+        run: |
+          php artisan view:clear
+          php artisan view:cache 2>&1 || exit 1
+          echo "All Blade templates compile successfully"
+
+  route-check:
+    name: Route & Config Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, redis, gd, zip, intl, bcmath, sodium
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Validate routes
+        run: php artisan route:list --json > /dev/null 2>&1
+
+      - name: Validate config
+        run: php artisan config:cache
+
+      - name: Check for missing translations/views
+        run: |
+          # Check all referenced views exist
+          MISSING=0
+          for view in $(grep -roh --include="*.php" "view(['\"][^'\"]*['\"]" app/ routes/ | sed "s/view(['\"]//;s/['\"]$//" | sort -u); do
+            VIEW_PATH="resources/views/$(echo $view | tr '.' '/').blade.php"
+            if [ ! -f "$VIEW_PATH" ]; then
+              echo "MISSING VIEW: $view -> $VIEW_PATH"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ $MISSING -gt 0 ]; then
+            echo "$MISSING missing view(s) found"
+            exit 1
+          else
+            echo "All referenced views exist"
+          fi
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: AGPL-3.0, GPL-3.0

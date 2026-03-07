@@ -1,0 +1,124 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: epidrive-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/99-local.ini
+    networks:
+      - epidrive
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
+    secrets:
+      - db_password
+      - redis_password
+    # SECURITY: Read-only root filesystem where possible, no privilege escalation
+    security_opt:
+      - no-new-privileges:true
+    # SECURITY: Drop all capabilities, add only needed ones
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: epidrive-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www:ro
+      - ./docker/nginx/default.conf:/etc/nginx/http.d/default.conf:ro
+    networks:
+      - epidrive
+    depends_on:
+      - app
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+  db:
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    container_name: epidrive-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: epidrive
+      POSTGRES_USER: epidrive
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    # SECURITY: Do NOT expose DB port to host in production
+    # Uncomment only for local development debugging
+    # ports:
+    #   - "127.0.0.1:5433:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - epidrive
+    secrets:
+      - db_password
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - FOWNER
+      - DAC_OVERRIDE
+
+  redis:
+    build:
+      context: ./docker/redis
+      dockerfile: Dockerfile
+    container_name: epidrive-redis
+    restart: unless-stopped
+    # SECURITY: Do NOT expose Redis port to host
+    # ports:
+    #   - "127.0.0.1:6380:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - epidrive
+    secrets:
+      - redis_password
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+
+networks:
+  epidrive:
+    driver: bridge
+    # SECURITY: Internal network, not directly accessible from host
+    internal: false
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt

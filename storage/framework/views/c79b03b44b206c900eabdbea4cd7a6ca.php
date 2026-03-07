@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?php echo $__env->yieldContent('meta_description', 'EpiDrive - Votre épicerie de quartier, livrée chez vous. Fruits, légumes, produits frais et bien plus encore.'); ?>">
+    <meta name="robots" content="index, follow">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
+    <title><?php echo $__env->yieldContent('title', 'EpiDrive - Épicerie en ligne, livraison à domicile'); ?></title>
+
+    
+    <link rel="canonical" href="<?php echo e(url()->current()); ?>">
+
+    
+    <meta property="og:title" content="<?php echo $__env->yieldContent('title', 'EpiDrive - Épicerie en ligne'); ?>">
+    <meta property="og:description" content="<?php echo $__env->yieldContent('meta_description', 'Votre épicerie de quartier, livrée chez vous.'); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+    <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('images/og-default.jpg')); ?>">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="EpiDrive">
+
+    <?php echo $__env->yieldContent('meta'); ?>
+
+    
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+</head>
+<body class="bg-gray-50 text-gray-700 font-sans antialiased min-h-screen flex flex-col" x-data="{ mobileMenu: false, cartPulse: false }">
+
+    
+    <div class="bg-gradient-accent text-emerald-900 py-2 relative overflow-hidden">
+        <div class="marquee-container">
+            <div class="marquee-content text-sm font-bold tracking-wide">
+                <span class="mx-8">🚀 Livraison en 30min dans votre quartier</span>
+                <span class="mx-8">⚡ Livraison GRATUITE dès 25€ d'achat</span>
+                <span class="mx-8">🎉 -20% sur votre 1ère commande avec le code BIENVENUE</span>
+                <span class="mx-8">🛒 + de 2000 produits disponibles</span>
+                <span class="mx-8">🚀 Livraison en 30min dans votre quartier</span>
+                <span class="mx-8">⚡ Livraison GRATUITE dès 25€ d'achat</span>
+                <span class="mx-8">🎉 -20% sur votre 1ère commande avec le code BIENVENUE</span>
+                <span class="mx-8">🛒 + de 2000 produits disponibles</span>
+            </div>
+        </div>
+    </div>
+
+    
+    <header class="sticky top-0 z-50 glass-dark shadow-lg shadow-emerald-900/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                
+                <a href="<?php echo e(route('home')); ?>" class="flex items-center space-x-2 group">
+                    <span class="text-3xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">🛒</span>
+                    <span class="text-2xl font-extrabold text-white tracking-tight">
+                        Epi<span class="text-amber-400">Drive</span>
+                    </span>
+                </a>
+
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="<?php echo e(route('home')); ?>" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Accueil</a>
+                    <a href="<?php echo e(route('catalog.index')); ?>" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Catalogue</a>
+                    <a href="<?php echo e(route('community.index')); ?>" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Communaut&eacute;</a>
+                </nav>
+
+                
+                <div class="flex items-center space-x-4">
+
+                    
+                    <a href="<?php echo e(route('cart.index')); ?>" class="relative p-2 text-white hover:text-amber-400 transition-colors duration-200 group">
+                        <svg class="w-6 h-6 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+                        </svg>
+                        <?php $cartCount = array_sum(session('cart', [])); ?>
+                        <?php if($cartCount > 0): ?>
+                            <span class="absolute -top-1 -right-1 bg-amber-400 text-emerald-900 text-xs font-extrabold rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
+                                  :class="{ 'animate-cart-bounce': cartPulse }">
+                                <?php echo e($cartCount); ?>
+
+                            </span>
+                        <?php endif; ?>
+                    </a>
+
+                    
+                    <div class="hidden md:block relative" x-data="{ userMenu: false }">
+                        <?php if(auth()->guard()->check()): ?>
+                            <button @click="userMenu = !userMenu" class="flex items-center space-x-2 text-emerald-100 hover:text-amber-400 transition-colors duration-200">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-emerald-400 flex items-center justify-center text-emerald-900 font-bold text-sm">
+                                    <?php echo e(substr(Auth::user()->name, 0, 1)); ?>
+
+                                </div>
+                                <span class="text-sm font-semibold"><?php echo e(Auth::user()->name); ?></span>
+                            </button>
+                            <div x-show="userMenu" @click.away="userMenu = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 class="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 overflow-hidden">
+                                <a href="<?php echo e(route('account.index')); ?>" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                                    <span class="mr-3">👤</span> Mon compte
+                                </a>
+                                <a href="<?php echo e(route('account.orders')); ?>" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                                    <span class="mr-3">📦</span> Mes commandes
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                    <?php echo csrf_field(); ?>
+                                    <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
+                                        <span class="mr-3">🚪</span> Se déconnecter
+                                    </button>
+                                </form>
+                            </div>
+                        <?php else: ?>
+                            <a href="<?php echo e(route('login')); ?>" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-all duration-200 text-sm font-semibold border border-white/20 hover:border-white/40">
+                                Connexion
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    
+                    <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-white hover:text-amber-400 transition-colors duration-200">
+                        <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg x-show="mobileMenu" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div x-show="mobileMenu" x-cloak
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-4"
+             class="md:hidden bg-gradient-to-b from-emerald-900 to-emerald-950 border-t border-emerald-700/30">
+            <div class="px-4 py-4 space-y-1">
+                <a href="<?php echo e(route('home')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                    <span>🏠</span><span>Accueil</span>
+                </a>
+                <a href="<?php echo e(route('catalog.index')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                    <span>🛍️</span><span>Catalogue</span>
+                </a>
+                <a href="<?php echo e(route('community.index')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                    <span>👥</span><span>Communaut&eacute;</span>
+                </a>
+                <?php if(auth()->guard()->check()): ?>
+                    <a href="<?php echo e(route('account.index')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                        <span>👤</span><span>Mon compte</span>
+                    </a>
+                    <a href="<?php echo e(route('account.orders')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                        <span>📦</span><span>Mes commandes</span>
+                    </a>
+                    <div class="border-t border-emerald-700/30 my-2"></div>
+                    <form method="POST" action="<?php echo e(route('logout')); ?>">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-xl text-red-300 hover:bg-red-900/20 transition-colors duration-200 font-semibold">
+                            <span>🚪</span><span>Se déconnecter</span>
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <div class="border-t border-emerald-700/30 my-2"></div>
+                    <a href="<?php echo e(route('login')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-amber-400 hover:bg-amber-400/10 transition-colors duration-200 font-semibold">
+                        <span>🔑</span><span>Connexion</span>
+                    </a>
+                    <a href="<?php echo e(route('register')); ?>" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-amber-400 hover:bg-amber-400/10 transition-colors duration-200 font-semibold">
+                        <span>✨</span><span>Inscription</span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </header>
+
+    
+    <?php if(session('success')): ?>
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 translate-x-full"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 translate-x-full"
+             class="fixed top-24 right-4 z-50 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-emerald-600/30 max-w-md">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">✅</span>
+                <p class="font-semibold"><?php echo e(session('success')); ?></p>
+                <button @click="show = false" class="ml-2 text-white/70 hover:text-white text-xl">&times;</button>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if(session('error')): ?>
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 translate-x-full"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 translate-x-full"
+             class="fixed top-24 right-4 z-50 bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-red-600/30 max-w-md">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">❌</span>
+                <p class="font-semibold"><?php echo e(session('error')); ?></p>
+                <button @click="show = false" class="ml-2 text-white/70 hover:text-white text-xl">&times;</button>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    
+    <main class="flex-1">
+        <?php echo $__env->yieldContent('content'); ?>
+    </main>
+
+    
+    <footer class="bg-gradient-footer text-gray-300 mt-0">
+        
+        <div class="border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+                        🔔 Restez informé de nos offres
+                    </h3>
+                    <p class="text-emerald-200/70 mb-6">
+                        Recevez nos promotions exclusives et nos nouveautés directement dans votre boîte mail.
+                    </p>
+                    <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+                        <input type="email" placeholder="votre@email.fr"
+                               class="flex-1 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-200">
+                        <button type="submit" class="px-6 py-3 bg-gradient-accent text-emerald-900 font-bold rounded-xl hover:shadow-lg hover:shadow-amber-400/30 transition-all duration-200 hover:scale-105">
+                            S'inscrire
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+                
+                <div class="md:col-span-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="text-3xl">🛒</span>
+                        <span class="text-2xl font-extrabold text-white">Epi<span class="text-amber-400">Drive</span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        Votre épicerie de quartier en ligne. Des produits frais et de qualité, livrés directement chez vous en 30 minutes.
+                    </p>
+                    
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-amber-400 hover:text-emerald-900 transition-all duration-200 hover:scale-110">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-amber-400 hover:text-emerald-900 transition-all duration-200 hover:scale-110">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641 0 12.017 0z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-amber-400 hover:text-emerald-900 transition-all duration-200 hover:scale-110">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4">Navigation</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="<?php echo e(route('home')); ?>" class="text-gray-400 hover:text-amber-400 transition-colors duration-200">Accueil</a></li>
+                        <li><a href="<?php echo e(route('catalog.index')); ?>" class="text-gray-400 hover:text-amber-400 transition-colors duration-200">Catalogue</a></li>
+                        <li><a href="<?php echo e(route('cart.index')); ?>" class="text-gray-400 hover:text-amber-400 transition-colors duration-200">Mon panier</a></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4">⏰ Horaires</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex justify-between"><span>Lundi - Vendredi</span><span class="text-emerald-400 font-semibold">8h - 21h</span></li>
+                        <li class="flex justify-between"><span>Samedi</span><span class="text-emerald-400 font-semibold">8h - 22h</span></li>
+                        <li class="flex justify-between"><span>Dimanche</span><span class="text-emerald-400 font-semibold">9h - 20h</span></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4">📍 Contact</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-center space-x-3">
+                            <span>📞</span>
+                            <span>+33 1 23 45 67 89</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <span>✉️</span>
+                            <span>contact@epidrive.fr</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <span>📍</span>
+                            <span>12 Rue du Commerce, 75015 Paris</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 mt-10 pt-8">
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-400 mb-4">
+                    <a href="<?php echo e(route('legal.mentions')); ?>" class="hover:text-white transition">Mentions legales</a>
+                    <a href="<?php echo e(route('legal.privacy')); ?>" class="hover:text-white transition">Politique de confidentialite</a>
+                    <a href="<?php echo e(route('legal.cgv')); ?>" class="hover:text-white transition">CGV</a>
+                    <a href="<?php echo e(route('legal.cookies')); ?>" class="hover:text-white transition">Politique cookies</a>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
+                    <p>&copy; <?php echo e(date('Y')); ?> EpiDrive. Tous droits reserves.</p>
+                    <p class="mt-2 sm:mt-0">Fait avec <span class="text-red-400">&#10084;</span> a Paris</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <div x-data="cookieConsent()" x-show="showBanner" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-4"
+         class="fixed bottom-0 left-0 right-0 z-[9999] p-4 sm:p-6">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Respect de votre vie privee</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Nous utilisons des cookies strictement necessaires au fonctionnement du site (session, panier, securite).
+                        Aucun cookie publicitaire ou de tracking n'est utilise.
+                        <a href="<?php echo e(route('legal.cookies')); ?>" class="text-emerald-600 hover:text-emerald-700 underline">En savoir plus</a>.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 flex-shrink-0">
+                    <button @click="acceptAll()"
+                            class="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition text-sm">
+                        Tout accepter
+                    </button>
+                    <button @click="acceptEssential()"
+                            class="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition text-sm">
+                        Essentiels uniquement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function cookieConsent() {
+            return {
+                showBanner: false,
+                init() {
+                    this.showBanner = !this.getCookie('cookie_consent');
+                },
+                acceptAll() {
+                    this.setCookie('cookie_consent', 'all', 365);
+                    this.showBanner = false;
+                },
+                acceptEssential() {
+                    this.setCookie('cookie_consent', 'essential', 365);
+                    this.showBanner = false;
+                },
+                setCookie(name, value, days) {
+                    const d = new Date();
+                    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+                    document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/;SameSite=Strict';
+                },
+                getCookie(name) {
+                    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                    return match ? match[2] : null;
+                }
+            };
+        }
+    </script>
+
+</body>
+</html>
+<?php /**PATH /var/www/resources/views/layouts/app.blade.php ENDPATH**/ ?>

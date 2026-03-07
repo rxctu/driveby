@@ -1,0 +1,229 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Every Monday at 6:00 UTC
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  composer-audit:
+    name: Composer Vulnerability Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Audit PHP dependencies for known CVEs
+        run: composer audit --format=plain
+
+  npm-audit:
+    name: NPM Vulnerability Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit NPM dependencies for known CVEs
+        run: npm audit --audit-level=high
+
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep (OWASP, security rules)
+        run: |
+          semgrep scan \
+            --config "p/owasp-top-ten" \
+            --config "p/php" \
+            --config "p/security-audit" \
+            --config "p/secrets" \
+            --error \
+            --json --json-output=semgrep-results.json \
+            .
+        continue-on-error: true
+
+      - name: Upload Semgrep results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+
+  trivy-fs:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy (filesystem vulnerabilities + secrets)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          scanners: 'vuln,secret,misconfig'
+
+  trivy-docker:
+    name: Trivy Docker Image Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t epidrive-app:ci .
+
+      - name: Scan Docker image for CVEs
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'epidrive-app:ci'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          scanners: 'vuln'
+
+  secret-scan:
+    name: Gitleaks Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan for leaked secrets in git history
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-lint:
+    name: Hadolint Dockerfile Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  nginx-config-check:
+    name: Nginx Config Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate nginx configuration
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro \
+            nginx:alpine \
+            nginx -t -c /etc/nginx/nginx.conf
+        continue-on-error: true
+
+  security-headers-check:
+    name: Security Checklist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for common security issues
+        run: |
+          echo "=== Checking for hardcoded secrets ==="
+          ISSUES=0
+
+          # Check for hardcoded passwords/keys in PHP files
+          if grep -rn --include="*.php" -E "(password|secret|key)\s*=\s*['\"][^'\"]{8,}" app/ config/ routes/ 2>/dev/null | grep -v -E "(env\(|config\(|__\(|trans\(|'required'|'string'|'min:|validation|placeholder|label|\.example)" | head -20; then
+            echo "WARNING: Possible hardcoded secrets found in PHP files"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check .env is in .gitignore
+          if ! grep -q "^\.env$" .gitignore; then
+            echo "FAIL: .env is not in .gitignore"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: .env is in .gitignore"
+          fi
+
+          # Check secrets/ is in .gitignore
+          if ! grep -q "secrets" .gitignore; then
+            echo "FAIL: secrets/ is not in .gitignore"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: secrets/ is in .gitignore"
+          fi
+
+          # Check APP_DEBUG is false in .env.example
+          if grep -q "APP_DEBUG=true" .env.example; then
+            echo "FAIL: APP_DEBUG=true in .env.example"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: APP_DEBUG=false in .env.example"
+          fi
+
+          # Check for dd() / dump() / var_dump() left in code
+          if grep -rn --include="*.php" -E "\b(dd|dump|var_dump|print_r)\s*\(" app/ routes/ 2>/dev/null | head -10; then
+            echo "WARNING: Debug functions found in production code"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: No debug functions in production code"
+          fi
+
+          # Check for eval() usage
+          if grep -rn --include="*.php" -E "\beval\s*\(" app/ 2>/dev/null; then
+            echo "FAIL: eval() found in application code"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: No eval() in application code"
+          fi
+
+          # Check CSRF middleware
+          if grep -rn --include="*.php" "withoutMiddleware.*csrf\|VerifyCsrfToken.*except" app/ 2>/dev/null; then
+            echo "WARNING: CSRF protection may be disabled for some routes"
+          else
+            echo "PASS: No CSRF exclusions found"
+          fi
+
+          # Check mass assignment protection
+          if grep -rn --include="*.php" "guarded\s*=\s*\[\s*\]" app/Models/ 2>/dev/null; then
+            echo "FAIL: Model with empty guarded array (mass assignment vulnerability)"
+            ISSUES=$((ISSUES + 1))
+          else
+            echo "PASS: No models with empty guarded arrays"
+          fi
+
+          echo ""
+          echo "=== Security checklist complete: $ISSUES issues found ==="
+          if [ $ISSUES -gt 0 ]; then
+            exit 1
+          fi

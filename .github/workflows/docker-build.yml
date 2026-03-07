@@ -1,0 +1,106 @@
+name: Docker Build & Compose Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'docker/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'docker/**'
+
+jobs:
+  docker-build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build app image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: epidrive-app:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  compose-validate:
+    name: Validate docker-compose.yml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create dummy secrets for validation
+        run: |
+          mkdir -p secrets
+          echo "test_password" > secrets/db_password.txt
+          echo "test_password" > secrets/redis_password.txt
+
+      - name: Validate compose file
+        run: docker compose config --quiet
+
+  docker-security:
+    name: Docker Security Best Practices
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Docker security best practices
+        run: |
+          ISSUES=0
+
+          echo "=== Docker Security Checks ==="
+
+          # Check Dockerfile runs as non-root
+          if grep -q "adduser\|useradd\|USER " Dockerfile; then
+            echo "PASS: Non-root user configured"
+          else
+            echo "FAIL: No non-root user in Dockerfile"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check no-new-privileges in compose
+          if grep -q "no-new-privileges" docker-compose.yml; then
+            echo "PASS: no-new-privileges security option set"
+          else
+            echo "FAIL: no-new-privileges not set in docker-compose.yml"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check cap_drop in compose
+          if grep -q "cap_drop" docker-compose.yml; then
+            echo "PASS: Capabilities dropped in docker-compose.yml"
+          else
+            echo "FAIL: No cap_drop in docker-compose.yml"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check no exposed DB/Redis ports to host
+          if grep -A2 "postgres\|redis" docker-compose.yml | grep -E "^\s+ports:" 2>/dev/null; then
+            echo "WARNING: Database/Redis ports may be exposed to host"
+          else
+            echo "PASS: No DB/Redis ports exposed to host"
+          fi
+
+          # Check secrets usage
+          if grep -q "secrets:" docker-compose.yml; then
+            echo "PASS: Docker secrets configured"
+          else
+            echo "FAIL: No Docker secrets in docker-compose.yml"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          echo ""
+          echo "=== Docker security check complete: $ISSUES issues found ==="
+          if [ $ISSUES -gt 0 ]; then
+            exit 1
+          fi
