@@ -62,6 +62,7 @@
                     <a href="{{ route('home') }}" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Accueil</a>
                     <a href="{{ route('catalog.index') }}" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Catalogue</a>
                     <a href="{{ route('community.index') }}" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Communaut&eacute;</a>
+                    <a href="{{ route('partners.index') }}" class="text-emerald-100 hover:text-amber-400 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider">Partenaires</a>
                 </nav>
 
                 {{-- Right: Cart + User --}}
@@ -150,6 +151,9 @@
                 </a>
                 <a href="{{ route('community.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
                     <span>👥</span><span>Communaut&eacute;</span>
+                </a>
+                <a href="{{ route('partners.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
+                    <span>🤝</span><span>Partenaires</span>
                 </a>
                 @auth
                     <a href="{{ route('account.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">

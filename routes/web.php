@@ -8,6 +8,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\SitemapController;
@@ -28,6 +29,9 @@ Route::get('/catalogue/{categorySlug}/{productSlug}', [CatalogController::class,
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+// Partners
+Route::get('/partenaires', [PartnerController::class, 'index'])->name('partners.index');
 
 // Legal / RGPD pages
 Route::get('/mentions-legales', [LegalController::class, 'mentions'])->name('legal.mentions');

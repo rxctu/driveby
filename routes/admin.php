@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,11 @@ Route::post('livraison/pricing', [DeliveryController::class, 'updatePricing'])->
 Route::post('livraison/slots', [DeliveryController::class, 'storeSlot'])->name('delivery.store-slot');
 Route::post('livraison/slots/{slot}/toggle', [DeliveryController::class, 'toggleSlot'])->name('delivery.toggle-slot');
 Route::post('livraison/slots/{slot}/delete', [DeliveryController::class, 'deleteSlot'])->name('delivery.delete-slot');
+
+// Partners CRUD
+Route::resource('partenaires', PartnerController::class)->names('partners')->parameters([
+    'partenaires' => 'partner',
+]);
 
 // General settings
 Route::get('parametres', [SettingController::class, 'index'])->name('settings.index');
