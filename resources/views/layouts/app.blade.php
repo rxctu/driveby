@@ -293,7 +293,7 @@
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li class="flex items-center space-x-3">
                             <span>📞</span>
-                            <span>+33 1 23 45 67 89</span>
+                            <span>contact@epidrive.fr</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <span>✉️</span>
@@ -301,7 +301,7 @@
                         </li>
                         <li class="flex items-center space-x-3">
                             <span>📍</span>
-                            <span>12 Rue du Commerce, 75015 Paris</span>
+                            <span>64 Chemin de Saint-Pardoux, 63600 Ambert</span>
                         </li>
                     </ul>
                 </div>
@@ -316,7 +316,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
                     <p>&copy; {{ date('Y') }} EpiDrive. Tous droits reserves.</p>
-                    <p class="mt-2 sm:mt-0">Fait avec <span class="text-red-400">&#10084;</span> a Paris</p>
+                    <p class="mt-2 sm:mt-0">Fait avec <span class="text-red-400">&#10084;</span> a Epi</p>
                 </div>
             </div>
         </div>

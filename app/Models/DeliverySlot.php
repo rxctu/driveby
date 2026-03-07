@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 
 class DeliverySlot extends Model
 {
@@ -70,6 +70,6 @@ class DeliverySlot extends Model
      */
     public function getLabelAttribute(): string
     {
-        return $this->day_name . ' ' . substr($this->start_time, 0, 5) . ' - ' . substr($this->end_time, 0, 5);
+        return $this->day_name.' '.substr($this->start_time, 0, 5).' - '.substr($this->end_time, 0, 5);
     }
 }

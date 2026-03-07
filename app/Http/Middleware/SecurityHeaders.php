@@ -38,7 +38,7 @@ class SecurityHeaders
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https:",
             "connect-src 'self' https://api.stripe.com",
-            "frame-src https://js.stripe.com https://hooks.stripe.com",
+            'frame-src https://js.stripe.com https://hooks.stripe.com',
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",

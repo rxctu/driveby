@@ -16,7 +16,7 @@ class CartController extends Controller
         $cartItems = [];
         $total = 0;
 
-        if (!empty($cart)) {
+        if (! empty($cart)) {
             $products = Product::whereIn('id', array_keys($cart))
                 ->where('is_active', true)
                 ->get()
@@ -58,20 +58,22 @@ class CartController extends Controller
         $newQuantity = $currentQuantity + $requestedQuantity;
 
         if ($product->stock !== null && $newQuantity > $product->stock) {
-            $msg = 'Stock insuffisant. Seulement ' . $product->stock . ' article(s) disponible(s).';
+            $msg = 'Stock insuffisant. Seulement '.$product->stock.' article(s) disponible(s).';
             if ($request->expectsJson()) {
                 return response()->json(['error' => $msg], 422);
             }
+
             return back()->with('error', $msg);
         }
 
         $cart[$productId] = $newQuantity;
         session(['cart' => $cart]);
 
-        $msg = $product->name . ' ajoute au panier.';
+        $msg = $product->name.' ajoute au panier.';
         if ($request->expectsJson()) {
             return response()->json(['success' => $msg, 'cart_count' => array_sum($cart)]);
         }
+
         return back()->with('success', $msg);
     }
 
@@ -95,6 +97,7 @@ class CartController extends Controller
                 if ($request->expectsJson()) {
                     return response()->json(['error' => $msg], 422);
                 }
+
                 return back()->with('error', $msg);
             }
             $cart[$productId] = $quantity;
@@ -105,6 +108,7 @@ class CartController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['success' => 'Panier mis a jour.', 'cart_count' => array_sum($cart)]);
         }
+
         return back()->with('success', 'Panier mis a jour.');
     }
 
@@ -117,6 +121,7 @@ class CartController extends Controller
         if (request()->expectsJson()) {
             return response()->json(['success' => 'Produit retire.', 'cart_count' => array_sum($cart)]);
         }
+
         return back()->with('success', 'Produit retire du panier.');
     }
 }

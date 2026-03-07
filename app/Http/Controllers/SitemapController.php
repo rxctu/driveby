@@ -23,14 +23,14 @@ class SitemapController extends Controller
 
         // Homepage
         $xml .= '<url>';
-        $xml .= '<loc>' . url('/') . '</loc>';
+        $xml .= '<loc>'.url('/').'</loc>';
         $xml .= '<changefreq>daily</changefreq>';
         $xml .= '<priority>1.0</priority>';
         $xml .= '</url>';
 
         // Catalog index
         $xml .= '<url>';
-        $xml .= '<loc>' . route('catalog.index') . '</loc>';
+        $xml .= '<loc>'.route('catalog.index').'</loc>';
         $xml .= '<changefreq>daily</changefreq>';
         $xml .= '<priority>0.9</priority>';
         $xml .= '</url>';
@@ -38,8 +38,8 @@ class SitemapController extends Controller
         // Categories
         foreach ($categories as $category) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('catalog.category', $category->slug) . '</loc>';
-            $xml .= '<lastmod>' . $category->updated_at->toW3cString() . '</lastmod>';
+            $xml .= '<loc>'.route('catalog.category', $category->slug).'</loc>';
+            $xml .= '<lastmod>'.$category->updated_at->toW3cString().'</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.8</priority>';
             $xml .= '</url>';
@@ -49,8 +49,8 @@ class SitemapController extends Controller
         foreach ($products as $product) {
             if ($product->category) {
                 $xml .= '<url>';
-                $xml .= '<loc>' . route('catalog.product', [$product->category->slug, $product->slug]) . '</loc>';
-                $xml .= '<lastmod>' . $product->updated_at->toW3cString() . '</lastmod>';
+                $xml .= '<loc>'.route('catalog.product', [$product->category->slug, $product->slug]).'</loc>';
+                $xml .= '<lastmod>'.$product->updated_at->toW3cString().'</lastmod>';
                 $xml .= '<changefreq>weekly</changefreq>';
                 $xml .= '<priority>0.7</priority>';
                 $xml .= '</url>';

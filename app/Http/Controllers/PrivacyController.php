@@ -66,7 +66,7 @@ class PrivacyController extends Controller
             'export_date' => now()->toIso8601String(),
         ];
 
-        $filename = 'epidrive-donnees-' . $user->id . '-' . now()->format('Y-m-d') . '.json';
+        $filename = 'epidrive-donnees-'.$user->id.'-'.now()->format('Y-m-d').'.json';
 
         return response()->streamDownload(function () use ($data) {
             echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -87,7 +87,7 @@ class PrivacyController extends Controller
 
         $user = Auth::user();
 
-        if (!Hash::check($request->input('password'), $user->password)) {
+        if (! Hash::check($request->input('password'), $user->password)) {
             return back()->with('error', 'Mot de passe incorrect.');
         }
 

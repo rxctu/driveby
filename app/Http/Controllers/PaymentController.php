@@ -36,7 +36,7 @@ class PaymentController extends Controller
                     'order_number' => $order->order_number,
                     'order_id' => $order->id,
                 ],
-                'description' => 'Commande EpiDrive ' . $order->order_number,
+                'description' => 'Commande EpiDrive '.$order->order_number,
             ]);
 
             $order->update([
@@ -71,9 +71,11 @@ class PaymentController extends Controller
             $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
         } catch (\UnexpectedValueException $e) {
             Log::warning('Stripe webhook: invalid payload');
+
             return response()->json(['error' => 'Invalid payload'], 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             Log::warning('Stripe webhook: invalid signature');
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
@@ -133,7 +135,7 @@ class PaymentController extends Controller
             // Get access token
             $authResponse = \Illuminate\Support\Facades\Http::withBasicAuth($clientId, $secret)
                 ->asForm()
-                ->post($baseUrl . '/v1/oauth2/token', [
+                ->post($baseUrl.'/v1/oauth2/token', [
                     'grant_type' => 'client_credentials',
                 ]);
 
@@ -141,12 +143,12 @@ class PaymentController extends Controller
 
             // Create PayPal order
             $paypalResponse = \Illuminate\Support\Facades\Http::withToken($accessToken)
-                ->post($baseUrl . '/v2/checkout/orders', [
+                ->post($baseUrl.'/v2/checkout/orders', [
                     'intent' => 'CAPTURE',
                     'purchase_units' => [
                         [
                             'reference_id' => $order->order_number,
-                            'description' => 'Commande EpiDrive ' . $order->order_number,
+                            'description' => 'Commande EpiDrive '.$order->order_number,
                             'amount' => [
                                 'currency_code' => 'EUR',
                                 'value' => number_format($order->total, 2, '.', ''),
@@ -211,7 +213,7 @@ class PaymentController extends Controller
             // Get access token
             $authResponse = \Illuminate\Support\Facades\Http::withBasicAuth($clientId, $secret)
                 ->asForm()
-                ->post($baseUrl . '/v1/oauth2/token', [
+                ->post($baseUrl.'/v1/oauth2/token', [
                     'grant_type' => 'client_credentials',
                 ]);
 
@@ -219,7 +221,7 @@ class PaymentController extends Controller
 
             // Capture payment
             $captureResponse = \Illuminate\Support\Facades\Http::withToken($accessToken)
-                ->post($baseUrl . '/v2/checkout/orders/' . $paypalOrderId . '/capture');
+                ->post($baseUrl.'/v2/checkout/orders/'.$paypalOrderId.'/capture');
 
             $captureData = $captureResponse->json();
 

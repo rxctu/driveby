@@ -49,7 +49,7 @@ class ProductController extends Controller
         $originalSlug = $validated['slug'];
         $counter = 1;
         while (Product::where('slug', $validated['slug'])->exists()) {
-            $validated['slug'] = $originalSlug . '-' . $counter++;
+            $validated['slug'] = $originalSlug.'-'.$counter++;
         }
 
         if ($request->hasFile('image')) {
@@ -78,7 +78,7 @@ class ProductController extends Controller
             $originalSlug = $validated['slug'];
             $counter = 1;
             while (Product::where('slug', $validated['slug'])->where('id', '!=', $product->id)->exists()) {
-                $validated['slug'] = $originalSlug . '-' . $counter++;
+                $validated['slug'] = $originalSlug.'-'.$counter++;
             }
         }
 

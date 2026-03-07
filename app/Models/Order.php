@@ -76,7 +76,7 @@ class Order extends Model
     public static function generateOrderNumber(): string
     {
         do {
-            $number = 'EPI-' . strtoupper(uniqid());
+            $number = 'EPI-'.strtoupper(uniqid());
         } while (static::where('order_number', $number)->exists());
 
         return $number;

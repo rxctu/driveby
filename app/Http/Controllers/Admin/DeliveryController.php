@@ -49,7 +49,7 @@ class DeliveryController extends Controller
         ];
 
         $validated = $request->validate([
-            'day' => 'required|string|in:' . implode(',', array_keys($dayMap)),
+            'day' => 'required|string|in:'.implode(',', array_keys($dayMap)),
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'max_orders' => 'required|integer|min:1|max:200',
@@ -69,7 +69,7 @@ class DeliveryController extends Controller
 
     public function toggleSlot(DeliverySlot $slot): RedirectResponse
     {
-        $slot->update(['is_active' => !$slot->is_active]);
+        $slot->update(['is_active' => ! $slot->is_active]);
 
         return back()->with('success', 'Statut du creneau mis a jour.');
     }

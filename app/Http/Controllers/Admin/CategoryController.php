@@ -51,7 +51,7 @@ class CategoryController extends Controller
         $originalSlug = $validated['slug'];
         $counter = 1;
         while (Category::where('slug', $validated['slug'])->exists()) {
-            $validated['slug'] = $originalSlug . '-' . $counter++;
+            $validated['slug'] = $originalSlug.'-'.$counter++;
         }
 
         $validated['is_active'] = $request->boolean('is_active', true);
@@ -96,7 +96,7 @@ class CategoryController extends Controller
             $originalSlug = $validated['slug'];
             $counter = 1;
             while (Category::where('slug', $validated['slug'])->where('id', '!=', $category->id)->exists()) {
-                $validated['slug'] = $originalSlug . '-' . $counter++;
+                $validated['slug'] = $originalSlug.'-'.$counter++;
             }
         }
 

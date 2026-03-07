@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class EncryptExistingData extends Command
 {
     protected $signature = 'data:encrypt-existing';
+
     protected $description = 'Encrypt existing PII data in orders and users tables (RGPD compliance)';
 
     public function handle(): int
@@ -24,12 +25,12 @@ class EncryptExistingData extends Command
             // Only encrypt if not already encrypted (check for base64 pattern)
             foreach (['customer_name', 'customer_phone', 'customer_address', 'delivery_instructions'] as $field) {
                 $value = $order->$field;
-                if ($value !== null && !$this->isEncrypted($value)) {
+                if ($value !== null && ! $this->isEncrypted($value)) {
                     $update[$field] = Crypt::encryptString($value);
                 }
             }
 
-            if (!empty($update)) {
+            if (! empty($update)) {
                 DB::table('orders')->where('id', $order->id)->update($update);
             }
 
@@ -48,12 +49,12 @@ class EncryptExistingData extends Command
 
             foreach (['phone', 'address'] as $field) {
                 $value = $user->$field;
-                if ($value !== null && !$this->isEncrypted($value)) {
+                if ($value !== null && ! $this->isEncrypted($value)) {
                     $update[$field] = Crypt::encryptString($value);
                 }
             }
 
-            if (!empty($update)) {
+            if (! empty($update)) {
                 DB::table('users')->where('id', $user->id)->update($update);
             }
 

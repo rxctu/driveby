@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\DeliverySlot;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
@@ -96,14 +95,14 @@ class CheckoutController extends Controller
         $orderItems = [];
 
         foreach ($cart as $productId => $quantity) {
-            if (!$products->has($productId)) {
+            if (! $products->has($productId)) {
                 return back()->with('error', 'Un produit de votre panier n\'est plus disponible.');
             }
 
             $product = $products->get($productId);
 
             if ($product->stock !== null && $quantity > $product->stock) {
-                return back()->with('error', 'Stock insuffisant pour ' . $product->name . '.');
+                return back()->with('error', 'Stock insuffisant pour '.$product->name.'.');
             }
 
             $lineTotal = $product->price * $quantity;
@@ -128,19 +127,19 @@ class CheckoutController extends Controller
         $order = DB::transaction(function () use ($validated, $subtotal, $deliveryFee, $total, $orderItems) {
             // Map form fields to actual database columns
             $deliverySlot = null;
-            if (!empty($validated['delivery_slot_id'])) {
+            if (! empty($validated['delivery_slot_id'])) {
                 $slot = DeliverySlot::find($validated['delivery_slot_id']);
                 if ($slot) {
                     $dayNames = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 7 => 'Dimanche'];
                     $dayLabel = $dayNames[$slot->day_of_week] ?? $slot->day_of_week;
                     $start = substr($slot->start_time, 0, 5);
                     $end = substr($slot->end_time, 0, 5);
-                    $deliverySlot = $dayLabel . ' ' . $start . '-' . $end;
+                    $deliverySlot = $dayLabel.' '.$start.'-'.$end;
                 }
             }
 
             $order = Order::create([
-                'order_number' => 'EPI-' . strtoupper(Str::random(8)),
+                'order_number' => 'EPI-'.strtoupper(Str::random(8)),
                 'user_id' => Auth::id(),
                 'status' => 'pending',
                 'payment_method' => $validated['payment_method'],
@@ -150,7 +149,7 @@ class CheckoutController extends Controller
                 'total' => $total,
                 'customer_name' => $validated['delivery_name'],
                 'customer_phone' => $validated['delivery_phone'],
-                'customer_address' => $validated['delivery_address'] . ', ' . $validated['delivery_postal_code'] . ' ' . $validated['delivery_city'],
+                'customer_address' => $validated['delivery_address'].', '.$validated['delivery_postal_code'].' '.$validated['delivery_city'],
                 'delivery_instructions' => $validated['notes'] ?? null,
                 'delivery_slot' => $deliverySlot,
             ]);
@@ -162,7 +161,7 @@ class CheckoutController extends Controller
                 $product = Product::lockForUpdate()->find($item['product_id']);
                 if ($product && $product->stock !== null) {
                     if ($product->stock < $item['quantity']) {
-                        throw new \RuntimeException('Stock insuffisant pour ' . $product->name);
+                        throw new \RuntimeException('Stock insuffisant pour '.$product->name);
                     }
                     $product->decrement('stock', $item['quantity']);
                 }
@@ -198,7 +197,7 @@ class CheckoutController extends Controller
         $allowedList = array_map('trim', explode(',', $allowedPrefixes));
         $postalPrefix = substr($postalCode, 0, 2);
 
-        if (!in_array($postalPrefix, $allowedList)) {
+        if (! in_array($postalPrefix, $allowedList)) {
             return response()->json([
                 'available' => false,
                 'message' => 'Livraison non disponible dans votre zone.',
@@ -208,7 +207,7 @@ class CheckoutController extends Controller
         $cart = session('cart', []);
         $subtotal = 0;
 
-        if (!empty($cart)) {
+        if (! empty($cart)) {
             $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
             foreach ($cart as $productId => $quantity) {
                 if ($products->has($productId)) {
@@ -229,7 +228,7 @@ class CheckoutController extends Controller
             'total' => $subtotal + $deliveryFee,
             'message' => $deliveryFee === 0
                 ? 'Livraison gratuite !'
-                : 'Frais de livraison : ' . number_format($deliveryFee, 2, ',', '') . ' EUR',
+                : 'Frais de livraison : '.number_format($deliveryFee, 2, ',', '').' EUR',
         ]);
     }
 

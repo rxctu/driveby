@@ -86,6 +86,6 @@ class OrderController extends Controller
             }
         }
 
-        return back()->with('success', 'Statut de la commande mis a jour : ' . $validated['status']);
+        return back()->with('success', 'Statut de la commande mis a jour : '.$validated['status']);
     }
 }

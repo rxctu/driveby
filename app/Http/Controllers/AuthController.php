@@ -124,7 +124,7 @@ class AuthController extends Controller
 
         if ($user) {
             // Update google_id if not set
-            if (!$user->google_id) {
+            if (! $user->google_id) {
                 $user->update(['google_id' => $googleUser->getId()]);
             }
         } else {

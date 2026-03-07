@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Product;
 use App\Models\SharedList;
 use App\Models\SharedListComment;
 use App\Models\SharedListVote;
@@ -34,8 +33,8 @@ class CommunityController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'ilike', "%{$search}%")
-                  ->orWhere('description', 'ilike', "%{$search}%")
-                  ->orWhere('tags', 'ilike', "%{$search}%");
+                    ->orWhere('description', 'ilike', "%{$search}%")
+                    ->orWhere('tags', 'ilike', "%{$search}%");
             });
         }
 
@@ -75,7 +74,7 @@ class CommunityController extends Controller
     public function show(SharedList $list): View|RedirectResponse
     {
         // Only allow viewing public lists or own lists
-        if (!$list->is_public && (!Auth::check() || Auth::id() !== $list->user_id)) {
+        if (! $list->is_public && (! Auth::check() || Auth::id() !== $list->user_id)) {
             abort(404);
         }
 
@@ -146,7 +145,7 @@ class CommunityController extends Controller
         $slug = $baseSlug;
         $counter = 1;
         while (SharedList::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
         }
 
@@ -317,7 +316,7 @@ class CommunityController extends Controller
 
         return response()->json([
             'cart_count' => $cartCount,
-            'message' => $addedCount . ' produit(s) ajoute(s) au panier.',
+            'message' => $addedCount.' produit(s) ajoute(s) au panier.',
         ]);
     }
 

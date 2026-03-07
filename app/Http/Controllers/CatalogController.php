@@ -40,8 +40,8 @@ class CatalogController extends Controller
             ->orderBy('name')
             ->paginate(24);
 
-        $metaTitle = $category->name . ' - EpiDrive';
-        $metaDescription = $category->description ?? 'Decouvrez notre selection de ' . $category->name . ' disponible en livraison a domicile.';
+        $metaTitle = $category->name.' - EpiDrive';
+        $metaDescription = $category->description ?? 'Decouvrez notre selection de '.$category->name.' disponible en livraison a domicile.';
 
         return view('catalog.category', compact('category', 'products', 'metaTitle', 'metaDescription'));
     }
@@ -67,10 +67,10 @@ class CatalogController extends Controller
             ->take(4)
             ->get();
 
-        $metaTitle = $product->name . ' - ' . $category->name . ' - EpiDrive';
+        $metaTitle = $product->name.' - '.$category->name.' - EpiDrive';
         $metaDescription = $product->description
             ? \Illuminate\Support\Str::limit(strip_tags($product->description), 160)
-            : 'Achetez ' . $product->name . ' en ligne sur EpiDrive. Livraison rapide a domicile.';
+            : 'Achetez '.$product->name.' en ligne sur EpiDrive. Livraison rapide a domicile.';
 
         return view('catalog.product', compact('category', 'product', 'relatedProducts', 'metaTitle', 'metaDescription'));
     }
