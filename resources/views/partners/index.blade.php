@@ -186,55 +186,44 @@
 
     {{-- CTA Commercant --}}
     <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div class="relative bg-gray-900 rounded-3xl overflow-hidden shadow-2xl">
-            {{-- Background pattern --}}
-            <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-yellow-400 to-emerald-400"></div>
+        <div class="relative bg-gradient-to-br from-emerald-50 via-white to-teal-50 rounded-3xl overflow-hidden border border-emerald-200/60 shadow-lg">
+            {{-- Subtle deco --}}
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-200/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-teal-200/20 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="relative z-10 p-8 sm:p-12 lg:p-14 text-center">
-                <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest px-5 py-2 rounded-full mb-6">
-                    Devenez partenaire EpiDrive
-                </div>
+                <span class="text-5xl mb-4 block">🏪</span>
 
-                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight">
-                    Vous etes commercant <br class="hidden sm:block">a Ambert ?
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3 leading-tight">
+                    Vous etes commercant a Ambert ?
                 </h2>
 
-                <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto mb-8">
-                    Proposez la livraison a domicile a vos clients, <span class="text-white font-semibold">sans aucune logistique a gerer</span>.
-                    EpiDrive recupere et livre vos commandes dans tout Ambert et alentours.
+                <p class="text-gray-600 text-base leading-relaxed max-w-xl mx-auto mb-8">
+                    Proposez la livraison a vos clients <strong class="text-gray-800">sans aucune logistique</strong>.
+                    EpiDrive recupere et livre vos commandes. Aucun frais, aucun engagement.
                 </p>
 
-                <div class="flex flex-wrap justify-center gap-6 mb-10">
-                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
-                        <span class="text-2xl">🚚</span>
-                        <div class="text-left">
-                            <div class="text-white font-bold text-sm">Livraison rapide</div>
-                            <div class="text-gray-500 text-xs">Zone 15-20km</div>
-                        </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <div class="flex items-center gap-2.5 bg-white rounded-xl px-4 py-2.5 shadow-sm border border-gray-100">
+                        <span class="text-lg">🚚</span>
+                        <span class="text-sm font-semibold text-gray-700">Livraison rapide</span>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
-                        <span class="text-2xl">💰</span>
-                        <div class="text-left">
-                            <div class="text-white font-bold text-sm">0 frais d'inscription</div>
-                            <div class="text-gray-500 text-xs">Sans engagement</div>
-                        </div>
+                    <div class="flex items-center gap-2.5 bg-white rounded-xl px-4 py-2.5 shadow-sm border border-gray-100">
+                        <span class="text-lg">💰</span>
+                        <span class="text-sm font-semibold text-gray-700">0 frais</span>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
-                        <span class="text-2xl">📦</span>
-                        <div class="text-left">
-                            <div class="text-white font-bold text-sm">On gere tout</div>
-                            <div class="text-gray-500 text-xs">Recuperation + livraison</div>
-                        </div>
+                    <div class="flex items-center gap-2.5 bg-white rounded-xl px-4 py-2.5 shadow-sm border border-gray-100">
+                        <span class="text-lg">📦</span>
+                        <span class="text-sm font-semibold text-gray-700">On gere tout</span>
                     </div>
                 </div>
 
                 <a href="mailto:contact@epidrive.fr?subject=Devenir partenaire EpiDrive"
-                   class="group inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-10 py-4 rounded-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 text-lg">
-                    <svg class="w-5 h-5 transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+                   class="group inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg text-base">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
                     Nous contacter
                 </a>
-                <p class="text-gray-600 text-sm mt-3">contact@epidrive.fr</p>
+                <p class="text-gray-400 text-sm mt-2">contact@epidrive.fr</p>
             </div>
         </div>
     </section>
