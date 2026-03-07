@@ -118,6 +118,7 @@ jobs:
           sed -i 's/DB_USERNAME=.*/DB_USERNAME=epidrive/' .env
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=testing/' .env
           sed -i 's/REDIS_HOST=.*/REDIS_HOST=127.0.0.1/' .env
+          mkdir -p storage/framework/{views,sessions,cache,testing} storage/logs bootstrap/cache
           php artisan key:generate
 
       - name: Run migrations
