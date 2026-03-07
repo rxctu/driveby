@@ -114,6 +114,35 @@
                     </div>
                 </div>
 
+                {{-- Banner Texts --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Bandeau defilant (annonces en haut du site)</label>
+                    <div x-data="{
+                        banners: {{ Js::from($settings->banner_texts ?: [['emoji' => '🚀', 'text' => '']]) }},
+                        addBanner() { this.banners.push({emoji: '📢', text: ''}); },
+                        removeBanner(index) { this.banners.splice(index, 1); }
+                    }">
+                        <template x-for="(banner, index) in banners" :key="index">
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="text" :name="'banner_texts['+index+'][emoji]'" x-model="banner.emoji"
+                                       class="w-16 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-green-500 focus:border-green-500"
+                                       placeholder="🔥">
+                                <input type="text" :name="'banner_texts['+index+'][text]'" x-model="banner.text"
+                                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500"
+                                       placeholder="Texte de l'annonce...">
+                                <button type="button" @click="removeBanner(index)" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Supprimer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                        <button type="button" @click="addBanner()"
+                                class="mt-2 text-sm text-green-600 hover:text-green-700 font-medium flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                            <span>Ajouter une annonce</span>
+                        </button>
+                    </div>
+                </div>
+
                 {{-- Save --}}
                 <div class="pt-4 border-t border-gray-200">
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition">

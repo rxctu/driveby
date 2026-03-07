@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/donnees-personnelles', [PrivacyController::class, 'myData'])->name('privacy');
         Route::post('/exporter-donnees', [PrivacyController::class, 'exportData'])->name('export-data');
         Route::post('/supprimer-compte', [PrivacyController::class, 'deleteAccount'])->name('delete-account');
+        Route::put('/mot-de-passe', [AccountController::class, 'updatePassword'])->name('password.update');
     });
 });
 

@@ -18,6 +18,7 @@ class SettingController extends Controller
             'email' => Setting::getValue('contact_email', ''),
             'address' => Setting::getValue('contact_address', ''),
             'opening_hours' => json_decode(Setting::getValue('opening_hours', '{}'), true) ?: [],
+            'banner_texts' => json_decode(Setting::getValue('banner_texts', ''), true) ?: [],
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -31,6 +32,7 @@ class SettingController extends Controller
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string|max:500',
             'opening_hours' => 'nullable|array',
+            'banner_texts' => 'nullable|array',
         ]);
 
         Setting::setValue('store_name', $validated['store_name']);
@@ -40,6 +42,10 @@ class SettingController extends Controller
 
         if (isset($validated['opening_hours'])) {
             Setting::setValue('opening_hours', json_encode($validated['opening_hours']));
+        }
+
+        if (isset($validated['banner_texts'])) {
+            Setting::setValue('banner_texts', json_encode(array_values($validated['banner_texts'])));
         }
 
         return back()->with('success', 'Parametres mis a jour avec succes.');

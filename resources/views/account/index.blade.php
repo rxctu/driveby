@@ -140,6 +140,59 @@
             </a>
         </div>
 
+        {{-- Password Change --}}
+        <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden mb-8">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-extrabold text-gray-900 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                    <span>Modifier mon mot de passe</span>
+                </h2>
+            </div>
+
+            <form method="POST" action="{{ route('account.password.update') }}" class="p-6">
+                @csrf
+                @method('PUT')
+
+                @if(session('success'))
+                    <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe actuel</label>
+                        <input type="password" name="current_password" id="current_password"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500 @error('current_password') border-red-500 @enderror"
+                               required>
+                        @error('current_password')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
+                        <input type="password" name="password" id="password"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500 @error('password') border-red-500 @enderror"
+                               required>
+                        @error('password')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirmer</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                               required>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+                        Mettre a jour le mot de passe
+                    </button>
+                </div>
+            </form>
+        </div>
+
         {{-- Recent Orders --}}
         <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden">
             <div class="flex items-center justify-between p-6 border-b border-gray-100">

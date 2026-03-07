@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,11 @@ Route::post('livraison/slots/{slot}/delete', [DeliveryController::class, 'delete
 Route::resource('partenaires', PartnerController::class)->names('partners')->parameters([
     'partenaires' => 'partner',
 ]);
+
+// Users management
+Route::get('utilisateurs', [UserController::class, 'index'])->name('users.index');
+Route::patch('utilisateurs/{user}/toggle', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+Route::post('utilisateurs/{user}/reset-password', [UserController::class, 'sendPasswordReset'])->name('users.send-reset');
 
 // General settings
 Route::get('parametres', [SettingController::class, 'index'])->name('settings.index');

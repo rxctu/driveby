@@ -29,20 +29,29 @@
 <body class="bg-gray-50 text-gray-700 font-sans antialiased min-h-screen flex flex-col" x-data="{ mobileMenu: false, cartPulse: false }">
 
     {{-- Delivery Banner --}}
+    @php
+        $bannerTexts = json_decode(\App\Models\Setting::getValue('banner_texts', ''), true) ?: [
+            ['emoji' => '🚀', 'text' => 'Livraison en 30min dans votre quartier'],
+            ['emoji' => '⚡', 'text' => 'Livraison GRATUITE dès 25€ d\'achat'],
+            ['emoji' => '🎉', 'text' => '-20% sur votre 1ère commande avec le code BIENVENUE'],
+            ['emoji' => '🛒', 'text' => '+ de 2000 produits disponibles'],
+        ];
+        $activeBanners = collect($bannerTexts)->filter(fn($b) => !empty($b['text']));
+    @endphp
+    @if($activeBanners->isNotEmpty())
     <div class="bg-gradient-accent text-emerald-900 py-2 relative overflow-hidden">
         <div class="marquee-container">
             <div class="marquee-content text-sm font-bold tracking-wide">
-                <span class="mx-8">🚀 Livraison en 30min dans votre quartier</span>
-                <span class="mx-8">⚡ Livraison GRATUITE dès 25€ d'achat</span>
-                <span class="mx-8">🎉 -20% sur votre 1ère commande avec le code BIENVENUE</span>
-                <span class="mx-8">🛒 + de 2000 produits disponibles</span>
-                <span class="mx-8">🚀 Livraison en 30min dans votre quartier</span>
-                <span class="mx-8">⚡ Livraison GRATUITE dès 25€ d'achat</span>
-                <span class="mx-8">🎉 -20% sur votre 1ère commande avec le code BIENVENUE</span>
-                <span class="mx-8">🛒 + de 2000 produits disponibles</span>
+                @foreach($activeBanners as $banner)
+                    <span class="mx-8">{{ $banner['emoji'] ?? '' }} {{ $banner['text'] }}</span>
+                @endforeach
+                @foreach($activeBanners as $banner)
+                    <span class="mx-8">{{ $banner['emoji'] ?? '' }} {{ $banner['text'] }}</span>
+                @endforeach
             </div>
         </div>
     </div>
+    @endif
 
     {{-- Sticky Header --}}
     <header class="sticky top-0 z-50 glass-dark shadow-lg shadow-emerald-900/20">
