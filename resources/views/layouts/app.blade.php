@@ -292,22 +292,30 @@
                     <h4 class="text-lg font-bold text-white mb-4">📍 Contact</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li class="flex items-center space-x-3">
-                            <span>✉️</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
                             <span>contact@epidrive.fr</span>
                         </li>
                         <li class="flex items-center space-x-3">
-                            <span>📍</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
                             <span>14 Boulevard Henri IV, 63600 Ambert</span>
                         </li>
-                        <li class="flex items-center space-x-3">
-                            <span>📷</span>
-                            <a href="https://www.instagram.com/epidrive63" target="_blank" rel="noopener" class="hover:text-amber-400 transition">@epidrive63</a>
-                        </li>
-                        <li class="flex items-center space-x-3">
-                            <span>👻</span>
-                            <span>epidrive63</span>
-                        </li>
                     </ul>
+
+                    {{-- Social icons --}}
+                    <div class="flex items-center space-x-4 mt-5">
+                        {{-- Facebook --}}
+                        <a href="https://www.facebook.com/epidrive63/" target="_blank" rel="noopener" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#1877F2] transition-colors group" title="Facebook">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        {{-- Instagram --}}
+                        <a href="https://www.instagram.com/epidrive63" target="_blank" rel="noopener" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] transition-all group" title="Instagram">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                        {{-- Snapchat --}}
+                        <a href="https://www.snapchat.com/add/epidrive63" target="_blank" rel="noopener" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#FFFC00] transition-colors group" title="Snapchat">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.21-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.076-.375-.09-.84-.181-1.468-.181-.195 0-.399.015-.6.045-.601.09-1.048.46-1.545.855-.9.719-1.832 1.461-3.51 1.461h-.06c-1.68 0-2.611-.742-3.51-1.461-.496-.396-.943-.765-1.545-.855-.2-.03-.404-.045-.6-.045-.63 0-1.093.091-1.468.18-.225.044-.404.076-.538.076-.299 0-.48-.119-.57-.404-.059-.195-.104-.375-.134-.554-.046-.195-.105-.479-.165-.57-1.873-.283-2.905-.701-3.146-1.271-.029-.075-.044-.149-.044-.225-.015-.24.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-.809-.33-1.224-.72-1.212-1.169 0-.359.284-.689.733-.838.165-.06.33-.09.509-.09.12 0 .3.015.449.104.39.18.747.301 1.048.301.181 0 .3-.045.374-.09-.007-.165-.018-.33-.03-.51l-.002-.06c-.105-1.628-.23-3.654.3-4.847C7.86 1.069 11.216.793 12.206.793z"/></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
 
