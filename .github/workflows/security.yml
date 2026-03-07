@@ -18,7 +18,7 @@ jobs:
     name: Composer Vulnerability Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -37,7 +37,7 @@ jobs:
     name: NPM Vulnerability Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,7 +57,7 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run Semgrep (OWASP, security rules)
         run: |
@@ -82,7 +82,7 @@ jobs:
     name: Trivy Filesystem Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run Trivy (filesystem vulnerabilities + secrets)
         uses: aquasecurity/trivy-action@0.28.0
@@ -98,7 +98,7 @@ jobs:
     name: Trivy Docker Image Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build Docker image
         run: docker build -t epidrive-app:ci .
@@ -116,7 +116,7 @@ jobs:
     name: Gitleaks Secret Detection
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -129,7 +129,7 @@ jobs:
     name: Hadolint Dockerfile Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
@@ -140,7 +140,7 @@ jobs:
     name: Nginx Config Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Validate nginx configuration
         run: |
@@ -154,7 +154,7 @@ jobs:
     name: Security Checklist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check for common security issues
         run: |
