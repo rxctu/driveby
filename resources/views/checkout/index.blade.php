@@ -55,7 +55,7 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
-        <form method="POST" action="{{ route('checkout.store') }}" x-data="checkoutForm()" @submit="handleSubmit($event)" class="lg:grid lg:grid-cols-3 lg:gap-8">
+        <form method="POST" action="{{ route('checkout.store') }}" x-data="checkoutForm()" @submit="handleSubmit($event)" @address-selected.window="recalcDelivery()" class="lg:grid lg:grid-cols-3 lg:gap-8">
             @csrf
 
             {{-- Checkout Form --}}
@@ -112,7 +112,7 @@
                             @enderror
                         </div>
 
-                        <div>
+                        <div x-data="addressAutocomplete()" @click.outside="suggestions = []">
                             <div class="flex items-center justify-between mb-1.5">
                                 <label for="delivery_address" class="block text-sm font-semibold text-gray-700">Adresse de livraison</label>
                                 <button type="button" @click="useGPS()"
@@ -124,10 +124,38 @@
                                     <span x-text="gpsLoading ? 'Localisation...' : 'Me localiser'"></span>
                                 </button>
                             </div>
-                            <input type="text" id="delivery_address" name="delivery_address" value="{{ old('delivery_address') }}" required
-                                   placeholder="12 Rue du Commerce"
-                                   @input.debounce.800ms="recalcDelivery()"
-                                   class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm py-3 px-4 transition">
+                            <div class="relative">
+                                <input type="text" id="delivery_address" name="delivery_address" value="{{ old('delivery_address') }}" required
+                                       placeholder="12 Rue du Commerce, Ambert..."
+                                       autocomplete="off"
+                                       @input.debounce.400ms="searchAddress($event.target.value)"
+                                       @keydown.arrow-down.prevent="highlightNext()"
+                                       @keydown.arrow-up.prevent="highlightPrev()"
+                                       @keydown.enter.prevent="selectHighlighted()"
+                                       @keydown.escape="suggestions = []"
+                                       class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm py-3 px-4 transition">
+                                {{-- Suggestions dropdown --}}
+                                <div x-show="suggestions.length > 0" x-cloak
+                                     class="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-60 overflow-y-auto">
+                                    <template x-for="(s, i) in suggestions" :key="i">
+                                        <button type="button"
+                                                @click="selectSuggestion(s)"
+                                                @mouseenter="highlightIndex = i"
+                                                class="w-full text-left px-4 py-3 text-sm transition flex items-start gap-3"
+                                                :class="highlightIndex === i ? 'bg-emerald-50 text-emerald-800' : 'hover:bg-gray-50 text-gray-700'">
+                                            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                                            <div>
+                                                <span class="font-medium" x-text="s.street"></span>
+                                                <span class="text-gray-400 text-xs block" x-text="s.context"></span>
+                                            </div>
+                                        </button>
+                                    </template>
+                                </div>
+                                {{-- Loading indicator --}}
+                                <div x-show="searchLoading" x-cloak class="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <svg class="w-4 h-4 animate-spin text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                </div>
+                            </div>
                             <p x-show="gpsError" x-cloak x-text="gpsError" class="mt-1 text-xs text-red-500 font-medium"></p>
                             @error('delivery_address')
                                 <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
@@ -449,6 +477,97 @@
     </style>
 
     <script>
+        function addressAutocomplete() {
+            let abortController = null;
+            return {
+                suggestions: [],
+                highlightIndex: -1,
+                searchLoading: false,
+
+                async searchAddress(query) {
+                    if (!query || query.length < 4) {
+                        this.suggestions = [];
+                        return;
+                    }
+
+                    if (abortController) abortController.abort();
+                    abortController = new AbortController();
+
+                    this.searchLoading = true;
+
+                    try {
+                        const params = new URLSearchParams({
+                            q: query,
+                            format: 'json',
+                            addressdetails: '1',
+                            limit: '6',
+                            countrycodes: 'fr',
+                            viewbox: '2.8,46.2,4.5,45.0',
+                            bounded: '0',
+                        });
+                        const res = await fetch('https://nominatim.openstreetmap.org/search?' + params, {
+                            headers: { 'Accept': 'application/json' },
+                            signal: abortController.signal
+                        });
+                        const data = await res.json();
+
+                        this.suggestions = data
+                            .filter(r => r.address)
+                            .map(r => {
+                                const a = r.address;
+                                const street = [a.house_number, a.road].filter(Boolean).join(' ') || r.display_name.split(',')[0];
+                                const city = a.city || a.town || a.village || a.municipality || '';
+                                const postcode = a.postcode || '';
+                                return {
+                                    street,
+                                    city,
+                                    postcode,
+                                    context: [postcode, city].filter(Boolean).join(' '),
+                                    display_name: r.display_name
+                                };
+                            });
+                        this.highlightIndex = -1;
+                    } catch (e) {
+                        if (e.name !== 'AbortError') this.suggestions = [];
+                    }
+
+                    this.searchLoading = false;
+                },
+
+                selectSuggestion(s) {
+                    document.getElementById('delivery_address').value = s.street;
+                    document.getElementById('delivery_city').value = s.city;
+                    document.getElementById('delivery_postal_code').value = s.postcode;
+                    this.suggestions = [];
+
+                    // Trigger delivery calculation on parent checkoutForm
+                    const form = this.$el.closest('[x-data]');
+                    if (form && form.__x) {
+                        form.__x.$data.recalcDelivery?.();
+                    } else {
+                        // Alpine v3 — dispatch a custom event
+                        this.$dispatch('address-selected');
+                    }
+                },
+
+                highlightNext() {
+                    if (this.suggestions.length === 0) return;
+                    this.highlightIndex = (this.highlightIndex + 1) % this.suggestions.length;
+                },
+
+                highlightPrev() {
+                    if (this.suggestions.length === 0) return;
+                    this.highlightIndex = this.highlightIndex <= 0 ? this.suggestions.length - 1 : this.highlightIndex - 1;
+                },
+
+                selectHighlighted() {
+                    if (this.highlightIndex >= 0 && this.highlightIndex < this.suggestions.length) {
+                        this.selectSuggestion(this.suggestions[this.highlightIndex]);
+                    }
+                }
+            };
+        }
+
         function checkoutForm() {
             return {
                 paymentMethod: '{{ old('payment_method', 'cash') }}',
