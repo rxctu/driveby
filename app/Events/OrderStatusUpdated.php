@@ -19,7 +19,7 @@ class OrderStatusUpdated implements ShouldBroadcast
     {
         return [
             new Channel('admin-orders'),
-            new Channel('order.' . $this->order->order_number),
+            new Channel('order.'.$this->order->order_number),
         ];
     }
 

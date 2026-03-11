@@ -26,7 +26,7 @@ class PromoCode extends Model
 
     public function isValid(float $subtotal = 0): array
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return ['valid' => false, 'message' => 'Ce code promo n\'est plus actif.'];
         }
 
@@ -45,7 +45,7 @@ class PromoCode extends Model
         if ($this->min_order && $subtotal < $this->min_order) {
             return [
                 'valid' => false,
-                'message' => 'Commande minimum de ' . number_format($this->min_order, 2, ',', ' ') . ' EUR requise.',
+                'message' => 'Commande minimum de '.number_format($this->min_order, 2, ',', ' ').' EUR requise.',
             ];
         }
 
@@ -69,8 +69,9 @@ class PromoCode extends Model
     public function getLabel(): string
     {
         if ($this->type === 'percentage') {
-            return '-' . intval($this->value) . '%';
+            return '-'.intval($this->value).'%';
         }
-        return '-' . number_format($this->value, 2, ',', ' ') . ' EUR';
+
+        return '-'.number_format($this->value, 2, ',', ' ').' EUR';
     }
 }

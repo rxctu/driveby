@@ -30,7 +30,7 @@ class CheckoutRequest extends FormRequest
             'delivery_city' => 'required|string|max:255',
             'delivery_postal_code' => 'required|string|size:5|regex:/^63/',
             'delivery_slot_id' => 'nullable|integer|exists:delivery_slots,id',
-            'payment_method' => 'required|string|in:' . $this->allowedPaymentMethods(),
+            'payment_method' => 'required|string|in:'.$this->allowedPaymentMethods(),
             'notes' => 'nullable|string|max:1000',
             'terms_accepted' => 'accepted',
         ];

@@ -1,6 +1,9 @@
 FROM alpine:3.23
 
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
 # Install build dependencies for PHP compilation
+# hadolint ignore=DL3018
 RUN apk add --no-cache \
     curl \
     zip \
@@ -50,11 +53,12 @@ RUN apk add --no-cache \
     libpq
 
 # Download and compile PHP 8.4 from source
-RUN cd /tmp \
-    && curl -sSL https://github.com/php/php-src/archive/refs/tags/php-8.4.5.tar.gz -o php-src.tar.gz \
-    && tar -xzf php-src.tar.gz \
-    && cd php-src-php-8.4.5 \
-    && ./buildconf --force \
+WORKDIR /tmp
+RUN curl -sSL https://github.com/php/php-src/archive/refs/tags/php-8.4.5.tar.gz -o php-src.tar.gz \
+    && tar -xzf php-src.tar.gz
+
+WORKDIR /tmp/php-src-php-8.4.5
+RUN ./buildconf --force \
     && ./configure \
         --prefix=/usr/local \
         --with-config-file-path=/usr/local/etc/php \
@@ -93,25 +97,24 @@ RUN cd /tmp \
         --enable-sockets \
         --enable-pcntl \
         --with-zlib \
-    && make -j$(nproc) \
+    && make -j"$(nproc)" \
     && make install \
-    && cd / \
     && rm -rf /tmp/php-src*
 
 # Create PHP config directories
 RUN mkdir -p /usr/local/etc/php/conf.d /usr/local/etc/php-fpm.d /var/log/php-fpm /run/php-fpm
 
 # Install Redis extension from source (6.3.0 - supports PHP 8.4)
-RUN cd /tmp \
-    && curl -sSL https://github.com/phpredis/phpredis/archive/refs/tags/6.3.0.tar.gz -o phpredis.tar.gz \
-    && tar -xzf phpredis.tar.gz \
-    && cd phpredis-6.3.0 \
-    && phpize \
+WORKDIR /tmp
+RUN curl -sSL https://github.com/phpredis/phpredis/archive/refs/tags/6.3.0.tar.gz -o phpredis.tar.gz \
+    && tar -xzf phpredis.tar.gz
+
+WORKDIR /tmp/phpredis-6.3.0
+RUN phpize \
     && ./configure \
-    && make -j$(nproc) \
+    && make -j"$(nproc)" \
     && make install \
     && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini \
-    && cd / \
     && rm -rf /tmp/phpredis*
 
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.conf
@@ -122,6 +125,7 @@ COPY docker/php/local.ini /usr/local/etc/php/conf.d/99-local.ini
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js
+# hadolint ignore=DL3018
 RUN apk add --no-cache nodejs npm
 
 # Create working directory
@@ -131,8 +135,10 @@ WORKDIR /var/www
 RUN addgroup -g 1000 www && adduser -u 1000 -G www -s /bin/bash -D www
 
 # Set permissions
-RUN chown -R www:www /var/www
+RUN chown -R www:www /var/www /var/log/php-fpm /run/php-fpm
 
 EXPOSE 9000
+
+USER www
 
 CMD ["php-fpm", "-F"]

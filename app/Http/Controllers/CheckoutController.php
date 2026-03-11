@@ -258,7 +258,7 @@ class CheckoutController extends Controller
 
         $promo = PromoCode::where('code', strtoupper(trim($request->code)))->first();
 
-        if (!$promo) {
+        if (! $promo) {
             return response()->json([
                 'valid' => false,
                 'message' => 'Code promo introuvable.',
@@ -267,7 +267,7 @@ class CheckoutController extends Controller
 
         $validation = $promo->isValid($request->subtotal);
 
-        if (!$validation['valid']) {
+        if (! $validation['valid']) {
             return response()->json($validation);
         }
 

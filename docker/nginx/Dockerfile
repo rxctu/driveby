@@ -1,5 +1,6 @@
-FROM alpine:3.21
+FROM alpine:3.23
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache nginx && \
     mkdir -p /run/nginx \
              /var/lib/nginx/tmp/client_body \
@@ -13,5 +14,7 @@ RUN apk add --no-cache nginx && \
 COPY default.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 80
+
+USER nginx
 
 CMD ["nginx", "-g", "daemon off;"]

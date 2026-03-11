@@ -44,7 +44,7 @@ class InventoryController extends Controller
         $barcode = trim($request->barcode);
         $mapping = BarcodeMapping::with('product')->where('barcode', $barcode)->first();
 
-        if (!$mapping) {
+        if (! $mapping) {
             return response()->json([
                 'status' => 'unknown',
                 'barcode' => $barcode,
@@ -229,6 +229,7 @@ class InventoryController extends Controller
     public function deleteMapping(BarcodeMapping $mapping): JsonResponse
     {
         $mapping->delete();
+
         return response()->json(['status' => 'deleted']);
     }
 

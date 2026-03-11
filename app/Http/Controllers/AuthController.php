@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class AuthController extends Controller
 {
@@ -100,7 +101,7 @@ class AuthController extends Controller
     /**
      * Redirect to Google OAuth.
      */
-    public function googleRedirect(): RedirectResponse
+    public function googleRedirect(): SymfonyRedirectResponse
     {
         return Socialite::driver('google')->redirect();
     }

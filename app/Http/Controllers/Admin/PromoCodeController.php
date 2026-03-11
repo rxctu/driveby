@@ -40,7 +40,7 @@ class PromoCodeController extends Controller
 
     public function toggle(PromoCode $promoCode): JsonResponse
     {
-        $promoCode->update(['is_active' => !$promoCode->is_active]);
+        $promoCode->update(['is_active' => ! $promoCode->is_active]);
 
         return response()->json(['status' => 'toggled', 'is_active' => $promoCode->is_active]);
     }

@@ -129,6 +129,15 @@ jobs:
           mkdir -p storage/framework/{views,sessions,cache,testing} storage/logs bootstrap/cache
           php artisan key:generate
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Build frontend assets
+        run: npm ci && npm run build
+
       - name: Run migrations
         run: php artisan migrate --force
 
