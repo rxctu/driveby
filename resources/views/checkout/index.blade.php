@@ -55,7 +55,7 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
-        <form method="POST" action="{{ route('checkout.store') }}" x-data="checkoutForm()" @submit="return handleSubmit($event)" class="lg:grid lg:grid-cols-3 lg:gap-8">
+        <form method="POST" action="{{ route('checkout.store') }}" x-data="checkoutForm()" @submit="handleSubmit($event)" class="lg:grid lg:grid-cols-3 lg:gap-8">
             @csrf
 
             {{-- Checkout Form --}}
