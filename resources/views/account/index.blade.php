@@ -208,7 +208,7 @@
             @if(isset($recentOrders) && $recentOrders->count() > 0)
                 <div class="divide-y divide-gray-100">
                     @foreach($recentOrders as $order)
-                        <a href="{{ route('account.order.detail', $order->id) }}"
+                        <a href="{{ route('account.order.detail', $order->order_number) }}"
                            class="flex items-center justify-between p-4 sm:p-6 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-transparent transition-all duration-200 group">
                             <div class="flex-1 min-w-0">
                                 <p class="font-bold text-gray-800 text-sm sm:text-base group-hover:text-emerald-700 transition">#{{ $order->order_number }}</p>

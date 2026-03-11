@@ -176,21 +176,16 @@
                                     @click="
                                         if (added) return;
                                         adding = true;
-                                        fetch('{{ route('cart.add') }}', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-                                            body: JSON.stringify({ product_id: {{ $product->id }}, quantity: 1 })
-                                        }).then(r => r.json()).then(d => {
+                                        addToCart({{ $product->id }}).then(() => {
                                             adding = false;
                                             added = true;
-                                            $dispatch('cart-updated');
                                             setTimeout(() => { added = false; }, 2000);
                                         }).catch(() => { adding = false; });
                                     "
                                     :disabled="adding"
                                     class="add-to-cart-btn w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
                                     :class="added ? 'bg-emerald-500 text-white scale-110' : 'bg-emerald-700 text-white hover:bg-emerald-600'"
-                                    :aria-label="added ? 'Ajouté' : 'Ajouter {{ $product->name }} au panier'">
+                                    :aria-label="added ? 'Ajouté' : 'Ajouter au panier'">
                                     {{-- Plus icon --}}
                                     <svg x-show="!adding && !added" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
@@ -229,26 +224,36 @@
     {{-- ============================================
          PROMO BANNER
          ============================================ --}}
+    @php
+        $promoEnabled = \App\Models\Setting::getValue('promo_enabled', '1') === '1';
+        $promoBadgeEmoji = \App\Models\Setting::getValue('promo_badge_emoji', '🎁');
+        $promoBadgeText = \App\Models\Setting::getValue('promo_badge_text', 'Offre spéciale');
+        $promoTitle = \App\Models\Setting::getValue('promo_title', 'Première commande ?');
+        $promoText = \App\Models\Setting::getValue('promo_text', '-20% avec le code BIENVENUE');
+        $promoButtonText = \App\Models\Setting::getValue('promo_button_text', 'En profiter maintenant');
+        $promoButtonEmoji = \App\Models\Setting::getValue('promo_button_emoji', '🎉');
+    @endphp
+    @if($promoEnabled)
     <section class="relative overflow-hidden"
              x-data="{ shown: false }" x-intersect.once="shown = true">
         <div class="bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 animate-gradient py-12 sm:py-16"
              x-show="shown" x-transition.duration.800ms>
             <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
                 <div class="inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-1 text-white/90 text-sm font-semibold mb-4">
-                    🎁 Offre spéciale
+                    {{ $promoBadgeEmoji }} {{ $promoBadgeText }}
                 </div>
                 <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 text-shadow">
-                    Première commande ?
+                    {{ $promoTitle }}
                 </h2>
                 <p class="text-xl sm:text-2xl text-white/90 mb-8 font-medium">
                     <span class="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2 inline-block">
-                        -20% avec le code <span class="font-black text-yellow-300">BIENVENUE</span>
+                        {!! preg_replace('/([A-Z]{3,})/', '<span class="font-black text-yellow-300">$1</span>', e($promoText)) !!}
                     </span>
                 </p>
                 <a href="{{ route('catalog.index') }}"
                    class="inline-flex items-center space-x-2 bg-white text-purple-700 font-bold px-8 py-4 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-lg">
-                    <span>En profiter maintenant</span>
-                    <span>🎉</span>
+                    <span>{{ $promoButtonText }}</span>
+                    <span>{{ $promoButtonEmoji }}</span>
                 </a>
             </div>
             {{-- Decorative circles --}}
@@ -257,6 +262,7 @@
             <div class="absolute top-1/2 left-1/4 w-20 h-20 bg-white/5 rounded-full"></div>
         </div>
     </section>
+    @endif
 
     {{-- ============================================
          HOW IT WORKS

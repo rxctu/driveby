@@ -60,4 +60,24 @@ class UserController extends Controller
 
         return back()->with('success', "Email de reinitialisation envoye a {$user->email}.");
     }
+
+    /**
+     * Update user trust level, verification, and admin notes.
+     */
+    public function updateTrust(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'trust_level' => 'required|integer|min:0|max:5',
+            'is_verified' => 'sometimes|boolean',
+            'admin_notes' => 'nullable|string|max:1000',
+        ]);
+
+        DB::table('users')->where('id', $user->id)->update([
+            'trust_level' => $validated['trust_level'],
+            'is_verified' => $request->boolean('is_verified'),
+            'admin_notes' => $validated['admin_notes'] ?? null,
+        ]);
+
+        return back()->with('success', "Confiance de {$user->name} mise a jour.");
+    }
 }

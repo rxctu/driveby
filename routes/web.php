@@ -96,8 +96,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('commande')->name('checkout.')->group(function () {
         Route::get('/', [CheckoutController::class, 'index'])->name('index');
         Route::post('/', [CheckoutController::class, 'store'])->name('store');
+        Route::post('/promo', [CheckoutController::class, 'applyPromo'])->name('apply-promo');
         Route::post('/livraison-estimation', [CheckoutController::class, 'calculateDelivery'])->name('delivery.estimate');
+        Route::post('/reverse-geocode', [CheckoutController::class, 'reverseGeocode'])->name('reverse-geocode');
         Route::get('/confirmation/{orderNumber}', [CheckoutController::class, 'success'])->name('success');
+        Route::get('/suivi/{orderNumber}', [CheckoutController::class, 'pollOrderStatus'])->name('poll-status');
     });
 
     // Payment
@@ -107,6 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('mon-compte')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'index'])->name('index');
         Route::get('/commandes', [AccountController::class, 'orders'])->name('orders');
+        Route::get('/mes-commandes/poll', [AccountController::class, 'pollOrders'])->name('poll-orders');
         Route::get('/commandes/{orderNumber}', [AccountController::class, 'orderDetail'])->name('order.detail');
         // RGPD - User data rights
         Route::get('/donnees-personnelles', [PrivacyController::class, 'myData'])->name('privacy');

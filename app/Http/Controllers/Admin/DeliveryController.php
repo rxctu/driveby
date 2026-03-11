@@ -19,8 +19,12 @@ class DeliveryController extends Controller
 
         $settings = (object) [
             'base_delivery_price' => Setting::getValue('base_delivery_price', 4.99),
-            'price_per_km' => Setting::getValue('price_per_km', 3),
+            'price_per_km' => Setting::getValue('price_per_km', 0.50),
             'max_distance_km' => Setting::getValue('max_distance_km', 20),
+            'free_delivery_threshold' => Setting::getValue('free_delivery_threshold', 50),
+            'store_lat' => Setting::getValue('store_lat', '45.5495'),
+            'store_lng' => Setting::getValue('store_lng', '3.7428'),
+            'store_address' => Setting::getValue('store_address', 'Ambert, 63600'),
         ];
 
         return view('admin.delivery.index', compact('slots', 'settings'));
@@ -32,10 +36,14 @@ class DeliveryController extends Controller
             'base_delivery_price' => 'required|numeric|min:0|max:100',
             'price_per_km' => 'required|numeric|min:0|max:100',
             'max_distance_km' => 'required|numeric|min:0|max:200',
+            'free_delivery_threshold' => 'required|numeric|min:0|max:1000',
+            'store_lat' => 'required|numeric|between:-90,90',
+            'store_lng' => 'required|numeric|between:-180,180',
+            'store_address' => 'nullable|string|max:500',
         ]);
 
         foreach ($validated as $key => $value) {
-            Setting::setValue($key, $value);
+            Setting::setValue($key, (string) $value);
         }
 
         return back()->with('success', 'Tarifs de livraison mis a jour.');

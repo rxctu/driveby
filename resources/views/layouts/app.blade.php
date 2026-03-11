@@ -78,17 +78,19 @@
                 <div class="flex items-center space-x-4">
 
                     {{-- Cart Icon --}}
-                    <a href="{{ route('cart.index') }}" class="relative p-2 text-white hover:text-amber-400 transition-colors duration-200 group">
+                    @php $cartCount = array_sum(session('cart', [])); @endphp
+                    <a href="{{ route('cart.index') }}" class="relative p-2 text-white hover:text-amber-400 transition-colors duration-200 group" data-cart-count="{{ $cartCount }}">
                         <svg class="w-6 h-6 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
                         </svg>
-                        @php $cartCount = array_sum(session('cart', [])); @endphp
-                        @if($cartCount > 0)
-                            <span class="absolute -top-1 -right-1 bg-amber-400 text-emerald-900 text-xs font-extrabold rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
-                                  :class="{ 'animate-cart-bounce': cartPulse }">
-                                {{ $cartCount }}
-                            </span>
-                        @endif
+                        <span x-show="$store.cart.count > 0"
+                              x-text="$store.cart.count"
+                              x-transition:enter="transition ease-out duration-300"
+                              x-transition:enter-start="scale-0"
+                              x-transition:enter-end="scale-100"
+                              :class="{ 'animate-cart-bounce': $store.cart.justAdded }"
+                              class="absolute -top-1 -right-1 bg-amber-400 text-emerald-900 text-xs font-extrabold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                        </span>
                     </a>
 
                     {{-- User Menu (Desktop) --}}
@@ -114,6 +116,11 @@
                                 <a href="{{ route('account.orders') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
                                     <span class="mr-3">📦</span> Mes commandes
                                 </a>
+                                @if(Auth::user()->is_admin)
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-sm text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-colors duration-150 font-semibold">
+                                        <span class="mr-3">⚙️</span> Administration
+                                    </a>
+                                @endif
                                 <div class="border-t border-gray-100 my-1"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -171,6 +178,11 @@
                     <a href="{{ route('account.orders') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-colors duration-200 font-semibold">
                         <span>📦</span><span>Mes commandes</span>
                     </a>
+                    @if(Auth::user()->is_admin)
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-amber-400 hover:bg-amber-400/10 transition-colors duration-200 font-semibold">
+                            <span>⚙️</span><span>Administration</span>
+                        </a>
+                    @endif
                     <div class="border-t border-emerald-700/30 my-2"></div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -232,7 +244,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="bg-gradient-footer text-gray-300 mt-0">
+    <footer class="bg-gradient-footer text-gray-300 mt-16">
         {{-- Newsletter Section --}}
         <div class="border-b border-white/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -373,6 +385,28 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    {{-- Toast Notification --}}
+    <div x-data x-show="$store.toast.visible" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+         x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+         class="fixed bottom-6 right-6 z-[9999] max-w-sm"
+         :class="{
+             'bg-gradient-to-r from-emerald-600 to-teal-600 shadow-emerald-600/30': $store.toast.type === 'success',
+             'bg-gradient-to-r from-red-600 to-rose-600 shadow-red-600/30': $store.toast.type === 'error',
+             'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-600/30': $store.toast.type === 'info'
+         }"
+         style="border-radius: 1rem; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);">
+        <div class="flex items-center px-5 py-3.5 text-white">
+            <span class="text-xl mr-3" x-text="$store.toast.type === 'success' ? '&#10003;' : $store.toast.type === 'error' ? '&#10007;' : '&#8505;'"></span>
+            <p class="font-semibold text-sm flex-1" x-text="$store.toast.message"></p>
+            <button @click="$store.toast.visible = false" class="ml-3 text-white/70 hover:text-white text-lg leading-none">&times;</button>
         </div>
     </div>
 

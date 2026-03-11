@@ -63,8 +63,8 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4" x-data="{ searchQuery: '{{ request('search', '') }}' }">
         {{-- Sort tabs + Search --}}
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            {{-- Sort pills --}}
-            <div class="flex items-center space-x-2">
+            {{-- Sort tabs - segmented control style --}}
+            <div class="inline-flex items-center bg-gray-100 rounded-xl p-1">
                 @php
                     $sorts = [
                         'popular' => ['label' => 'Populaire', 'icon' => '🔥'],
@@ -74,10 +74,10 @@
                 @endphp
                 @foreach($sorts as $sortKey => $sortData)
                     <a href="{{ route('community.index', array_merge(request()->except('sort', 'page'), ['sort' => $sortKey])) }}"
-                       class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200
+                       class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
                               {{ ($sort ?? 'popular') === $sortKey
-                                  ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/30'
-                                  : 'bg-white text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 border border-gray-200' }}">
+                                  ? 'bg-white text-gray-900 shadow-sm'
+                                  : 'text-gray-500 hover:text-gray-700' }}">
                         <span>{{ $sortData['icon'] }}</span>
                         <span>{{ $sortData['label'] }}</span>
                     </a>
@@ -118,7 +118,7 @@
             <a href="{{ route('community.index', array_merge(request()->except('tag', 'page'))) }}"
                class="flex-shrink-0 inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200
                       {{ !$activeTag
-                          ? 'bg-emerald-700 text-white shadow-md'
+                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                           : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300 hover:text-emerald-700' }}">
                 Tous
             </a>
@@ -126,7 +126,7 @@
                 <a href="{{ route('community.index', array_merge(request()->except('tag', 'page'), ['tag' => $tagItem])) }}"
                    class="flex-shrink-0 inline-flex items-center space-x-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200
                           {{ $activeTag === $tagItem
-                              ? 'bg-emerald-700 text-white shadow-md'
+                              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                               : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300 hover:text-emerald-700' }}">
                     <span>{{ $tagEmojis[$tagItem] ?? '🏷️' }}</span>
                     <span>{{ $tagItem }}</span>
@@ -138,7 +138,8 @@
     {{-- ============================================
          LISTS GRID
          ============================================ --}}
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+             x-data="{ shown: false }" x-intersect.once="shown = true">
         @php
             $cardColors = [
                 'from-emerald-500 to-teal-500',
@@ -153,34 +154,43 @@
         @if($lists->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($lists as $index => $list)
-                    <div class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1"
+                    <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-400 overflow-hidden hover:-translate-y-1.5"
+                         style="transition-delay: {{ min($index * 60, 400) }}ms"
+                         :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
                          x-data="{ copying: false, copied: false }">
-                        {{-- Color stripe --}}
-                        <div class="h-2 bg-gradient-to-r {{ $cardColors[$index % count($cardColors)] }}"></div>
+
+                        {{-- Gradient header strip --}}
+                        <div class="h-1.5 bg-gradient-to-r {{ $cardColors[$index % count($cardColors)] }}"></div>
 
                         <a href="{{ route('community.show', $list) }}" class="block p-5">
-                            {{-- User info --}}
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                                    {{ mb_strtoupper(mb_substr($list->user->name ?? '?', 0, 1)) }}
+                            {{-- User info row --}}
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $cardColors[$index % count($cardColors)] }} flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+                                        {{ mb_strtoupper(mb_substr($list->user->name ?? '?', 0, 1)) }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-semibold text-gray-800 truncate">{{ $list->user->name ?? 'Anonyme' }}</p>
+                                        <p class="text-xs text-gray-400">{{ $list->created_at->diffForHumans() }}</p>
+                                    </div>
                                 </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-gray-800 truncate">{{ $list->user->name ?? 'Anonyme' }}</p>
-                                    <p class="text-xs text-gray-400">{{ $list->created_at->diffForHumans() }}</p>
-                                </div>
+                                {{-- Item count badge --}}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-xs font-semibold text-gray-600">
+                                    📦 {{ $list->items_count ?? 0 }}
+                                </span>
                             </div>
 
-                            {{-- Title & description --}}
-                            <h3 class="text-lg font-bold text-gray-900 truncate group-hover:text-emerald-700 transition-colors duration-200 mb-1">
+                            {{-- Title --}}
+                            <h3 class="text-lg font-bold text-gray-900 truncate group-hover:text-emerald-700 transition-colors duration-200 mb-1.5">
                                 {{ $list->title }}
                             </h3>
                             @if($list->description)
-                                <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ $list->description }}</p>
+                                <p class="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">{{ $list->description }}</p>
                             @endif
 
                             {{-- Tags --}}
                             @if($list->tags)
-                                <div class="flex flex-wrap gap-1.5 mb-4">
+                                <div class="flex flex-wrap gap-1.5 mb-1">
                                     @foreach(is_array($list->tags) ? $list->tags : explode(',', $list->tags) as $tag)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
                                             {{ trim($tag) }}
@@ -190,20 +200,16 @@
                             @endif
                         </a>
 
-                        {{-- Bottom stats bar --}}
+                        {{-- Bottom action bar --}}
                         <div class="border-t border-gray-100 px-5 py-3 flex items-center justify-between">
-                            <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                <span class="inline-flex items-center space-x-1" title="Likes">
-                                    <span>👍</span>
+                            <div class="flex items-center space-x-3 text-sm">
+                                <span class="inline-flex items-center space-x-1 text-gray-500" title="Likes">
+                                    <span class="text-base">👍</span>
                                     <span class="font-semibold">{{ $list->likes_count ?? $list->likes ?? 0 }}</span>
                                 </span>
-                                <span class="inline-flex items-center space-x-1" title="Dislikes">
-                                    <span>👎</span>
+                                <span class="inline-flex items-center space-x-1 text-gray-500" title="Dislikes">
+                                    <span class="text-base">👎</span>
                                     <span class="font-semibold">{{ $list->dislikes_count ?? $list->dislikes ?? 0 }}</span>
-                                </span>
-                                <span class="inline-flex items-center space-x-1" title="Produits">
-                                    <span>📦</span>
-                                    <span class="font-semibold">{{ $list->items_count ?? 0 }}</span>
                                 </span>
                                 @if(isset($list->total_price))
                                     <span class="inline-flex items-center space-x-1 text-emerald-700 font-bold" title="Prix total estimé">
@@ -231,8 +237,8 @@
                                     }).catch(() => { copying = false; });
                                 "
                                 :disabled="copying"
-                                class="inline-flex items-center space-x-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200"
-                                :class="copied ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'"
+                                class="inline-flex items-center space-x-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl transition-all duration-300"
+                                :class="copied ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white'"
                                 title="Copier dans mon panier">
                                 <svg x-show="!copying && !copied" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
@@ -258,7 +264,7 @@
         @else
             {{-- Empty state --}}
             <div class="text-center py-20">
-                <div class="text-6xl mb-6">📋</div>
+                <div class="text-6xl mb-6 animate-float">📋</div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-3">Aucune liste trouvée</h3>
                 <p class="text-gray-500 mb-8 max-w-md mx-auto">
                     Soyez le premier à partager une liste de courses avec la communauté !

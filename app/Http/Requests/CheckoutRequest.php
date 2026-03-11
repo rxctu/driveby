@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Setting;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CheckoutRequest extends FormRequest
@@ -27,9 +28,9 @@ class CheckoutRequest extends FormRequest
             'delivery_phone' => 'required|string|max:20',
             'delivery_address' => 'required|string|max:500',
             'delivery_city' => 'required|string|max:255',
-            'delivery_postal_code' => 'required|string|size:5',
+            'delivery_postal_code' => 'required|string|size:5|regex:/^63/',
             'delivery_slot_id' => 'nullable|integer|exists:delivery_slots,id',
-            'payment_method' => 'required|string|in:cash,stripe,paypal',
+            'payment_method' => 'required|string|in:' . $this->allowedPaymentMethods(),
             'notes' => 'nullable|string|max:1000',
             'terms_accepted' => 'accepted',
         ];
@@ -51,6 +52,7 @@ class CheckoutRequest extends FormRequest
             'delivery_city.required' => 'La ville est obligatoire.',
             'delivery_postal_code.required' => 'Le code postal est obligatoire.',
             'delivery_postal_code.size' => 'Le code postal doit contenir exactement 5 caracteres.',
+            'delivery_postal_code.regex' => 'Nous livrons uniquement dans le departement 63 (Puy-de-Dome).',
             'payment_method.required' => 'Veuillez choisir un mode de paiement.',
             'payment_method.in' => 'Le mode de paiement selectionne n\'est pas valide.',
             'terms_accepted.accepted' => 'Vous devez accepter les conditions generales de vente.',
@@ -62,6 +64,13 @@ class CheckoutRequest extends FormRequest
      *
      * @return array<string, string>
      */
+    private function allowedPaymentMethods(): string
+    {
+        $onlineEnabled = Setting::getValue('online_payments_enabled', '1') === '1';
+
+        return $onlineEnabled ? 'cash,stripe,paypal' : 'cash';
+    }
+
     public function attributes(): array
     {
         return [

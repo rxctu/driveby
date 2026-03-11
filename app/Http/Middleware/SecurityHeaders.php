@@ -25,7 +25,7 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions policy - restrict browser features
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
 
         // Content Security Policy
         $nonce = base64_encode(random_bytes(16));
@@ -37,7 +37,7 @@ class SecurityHeaders
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https:",
-            "connect-src 'self' https://api.stripe.com",
+            "connect-src 'self' https://api.stripe.com ws://localhost:8085 wss://localhost:8085",
             'frame-src https://js.stripe.com https://hooks.stripe.com',
             "object-src 'none'",
             "base-uri 'self'",

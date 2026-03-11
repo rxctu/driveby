@@ -23,28 +23,71 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{-- Store Location --}}
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <svg class="w-4 h-4 mr-1.5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Adresse du magasin (point de depart)
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-1">
+                            <label for="store_address" class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                            <input type="text" name="store_address" id="store_address"
+                                   value="{{ old('store_address', $settings->store_address ?? 'Ambert, 63600') }}"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label for="store_lat" class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                            <input type="number" name="store_lat" id="store_lat" step="0.0001" min="-90" max="90"
+                                   value="{{ old('store_lat', $settings->store_lat ?? '45.5495') }}"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label for="store_lng" class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                            <input type="number" name="store_lng" id="store_lng" step="0.0001" min="-180" max="180"
+                                   value="{{ old('store_lng', $settings->store_lng ?? '3.7428') }}"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
+                        </div>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-400">Les coordonnees GPS sont utilisees pour calculer la distance de livraison. Ambert : 45.5495, 3.7428</p>
+                </div>
+
+                {{-- Pricing --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                         <label for="base_delivery_price" class="block text-sm font-medium text-gray-700 mb-1">Prix de base (&euro;)</label>
                         <input type="number" name="base_delivery_price" id="base_delivery_price" step="0.01" min="0"
-                               value="{{ old('base_delivery_price', $settings->base_delivery_price ?? 10) }}"
+                               value="{{ old('base_delivery_price', $settings->base_delivery_price ?? 4.99) }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
                         <p class="mt-1 text-xs text-gray-400">Prix minimum de livraison</p>
                     </div>
                     <div>
                         <label for="price_per_km" class="block text-sm font-medium text-gray-700 mb-1">Prix par km (&euro;)</label>
                         <input type="number" name="price_per_km" id="price_per_km" step="0.01" min="0"
-                               value="{{ old('price_per_km', $settings->price_per_km ?? 3) }}"
+                               value="{{ old('price_per_km', $settings->price_per_km ?? 0.50) }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
                         <p class="mt-1 text-xs text-gray-400">Cout additionnel par kilometre</p>
                     </div>
                     <div>
-                        <label for="max_distance_km" class="block text-sm font-medium text-gray-700 mb-1">Distance maximale (km)</label>
+                        <label for="max_distance_km" class="block text-sm font-medium text-gray-700 mb-1">Distance max (km)</label>
                         <input type="number" name="max_distance_km" id="max_distance_km" step="0.1" min="0"
                                value="{{ old('max_distance_km', $settings->max_distance_km ?? 20) }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
-                        <p class="mt-1 text-xs text-gray-400">Rayon de livraison maximum</p>
+                        <p class="mt-1 text-xs text-gray-400">Rayon maximum</p>
                     </div>
+                    <div>
+                        <label for="free_delivery_threshold" class="block text-sm font-medium text-gray-700 mb-1">Gratuite des (&euro;)</label>
+                        <input type="number" name="free_delivery_threshold" id="free_delivery_threshold" step="0.01" min="0"
+                               value="{{ old('free_delivery_threshold', $settings->free_delivery_threshold ?? 50) }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500">
+                        <p class="mt-1 text-xs text-gray-400">Livraison gratuite au-dessus</p>
+                    </div>
+                </div>
+
+                {{-- Formula Preview --}}
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-sm text-blue-700"><strong>Formule :</strong> Prix de base + (distance km x prix/km) = cout de livraison</p>
+                    <p class="text-xs text-blue-600 mt-1">Ex: {{ number_format($settings->base_delivery_price ?? 4.99, 2, ',', '') }}&euro; + (10 km x {{ number_format($settings->price_per_km ?? 0.50, 2, ',', '') }}&euro;) = {{ number_format(($settings->base_delivery_price ?? 4.99) + (10 * ($settings->price_per_km ?? 0.50)), 2, ',', '') }}&euro;</p>
                 </div>
 
                 <div class="mt-6">

@@ -1,6 +1,9 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+window.L = L;
 
 Alpine.plugin(intersect);
 
@@ -43,9 +46,15 @@ Alpine.store('toast', {
 // ---------------------------------------------------------------------------
 Alpine.store('cart', {
     count: parseInt(document.querySelector('[data-cart-count]')?.dataset.cartCount ?? '0', 10),
+    justAdded: false,
+    _bounceTimeout: null,
 
     setCount(n) {
         this.count = n;
+        // Trigger bounce animation on badge
+        this.justAdded = true;
+        clearTimeout(this._bounceTimeout);
+        this._bounceTimeout = setTimeout(() => { this.justAdded = false; }, 600);
     },
 });
 

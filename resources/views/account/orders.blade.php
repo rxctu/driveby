@@ -23,11 +23,22 @@
                 </ol>
             </nav>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Mes commandes</h1>
-            <p class="text-emerald-100 mt-1">Retrouvez l'historique de toutes vos commandes</p>
+            <p class="text-emerald-100 mt-1">
+                Retrouvez l'historique de toutes vos commandes
+                <span x-data="{ polling: true }" x-show="polling" class="inline-flex items-center ml-2">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
+                    <span class="ml-1.5 text-xs text-emerald-200">Mise a jour en direct</span>
+                </span>
+            </p>
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 pb-12"
+         x-data="ordersPoller()"
+         x-init="initEcho()">
 
         @if(isset($orders) && $orders->count() > 0)
 
@@ -37,6 +48,7 @@
                     'confirmed' => 'bg-blue-100 text-blue-700 ring-blue-200',
                     'processing' => 'bg-orange-100 text-orange-700 ring-orange-200',
                     'shipped' => 'bg-purple-100 text-purple-700 ring-purple-200',
+                    'delivering' => 'bg-purple-100 text-purple-700 ring-purple-200',
                     'delivered' => 'bg-emerald-100 text-emerald-700 ring-emerald-200',
                     'cancelled' => 'bg-red-100 text-red-700 ring-red-200',
                 ];
@@ -45,6 +57,7 @@
                     'confirmed' => 'Confirmee',
                     'processing' => 'En preparation',
                     'shipped' => 'En livraison',
+                    'delivering' => 'En livraison',
                     'delivered' => 'Livree',
                     'cancelled' => 'Annulee',
                 ];
@@ -65,7 +78,8 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach($orders as $order)
                             <tr class="hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-transparent transition-all duration-200 group cursor-pointer"
-                                onclick="window.location='{{ route('account.order.detail', $order->order_number) }}'">
+                                onclick="window.location='{{ route('account.order.detail', $order->order_number) }}'"
+                                data-order-number="{{ $order->order_number }}">
                                 <td class="px-6 py-5">
                                     <span class="font-bold text-gray-800 group-hover:text-emerald-700 transition">#{{ $order->order_number }}</span>
                                 </td>
@@ -73,8 +87,10 @@
                                     {{ $order->created_at->format('d/m/Y H:i') }}
                                 </td>
                                 <td class="px-6 py-5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ring-1 {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-700 ring-gray-200' }}">
-                                        {{ $statusLabels[$order->status] ?? $order->status }}
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ring-1 transition-all duration-300 order-status-badge"
+                                          :class="getStatusClasses('{{ $order->order_number }}')"
+                                          x-text="getStatusLabel('{{ $order->order_number }}')"
+                                          data-initial-status="{{ $order->status }}">
                                     </span>
                                 </td>
                                 <td class="px-6 py-5 text-right font-extrabold text-gray-900">
@@ -100,12 +116,14 @@
                 @foreach($orders as $index => $order)
                     <a href="{{ route('account.order.detail', $order->order_number) }}"
                        class="block bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-5 hover:shadow-xl hover:border-emerald-200 transition-all duration-300 active:scale-[0.98]"
-                       x-data x-init="setTimeout(() => $el.classList.remove('opacity-0', 'translate-y-2'), {{ $index * 100 }})"
+                       data-order-number="{{ $order->order_number }}"
                        style="animation: slide-up 0.4s ease-out {{ $index * 0.1 }}s both;">
                         <div class="flex items-center justify-between mb-3">
                             <span class="font-bold text-gray-800 text-base">#{{ $order->order_number }}</span>
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ring-1 {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-700 ring-gray-200' }}">
-                                {{ $statusLabels[$order->status] ?? $order->status }}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ring-1 transition-all duration-300 order-status-badge"
+                                  :class="getStatusClasses('{{ $order->order_number }}')"
+                                  x-text="getStatusLabel('{{ $order->order_number }}')"
+                                  data-initial-status="{{ $order->status }}">
                             </span>
                         </div>
                         <div class="flex items-center justify-between">
@@ -148,6 +166,97 @@
             from { opacity: 0; transform: translateY(0.5rem); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @keyframes statusFlash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .status-updated {
+            animation: statusFlash 0.5s ease-out;
+        }
     </style>
+
+    @if(isset($orders) && $orders->count() > 0)
+    <script>
+        function ordersPoller() {
+            return {
+                statuses: {},
+                orderNumbers: [],
+                statusColorMap: {
+                    'pending': 'bg-amber-100 text-amber-700 ring-amber-200',
+                    'confirmed': 'bg-blue-100 text-blue-700 ring-blue-200',
+                    'processing': 'bg-orange-100 text-orange-700 ring-orange-200',
+                    'shipped': 'bg-purple-100 text-purple-700 ring-purple-200',
+                    'delivering': 'bg-purple-100 text-purple-700 ring-purple-200',
+                    'delivered': 'bg-emerald-100 text-emerald-700 ring-emerald-200',
+                    'cancelled': 'bg-red-100 text-red-700 ring-red-200'
+                },
+                statusLabelMap: {
+                    'pending': 'En attente',
+                    'confirmed': 'Confirmee',
+                    'processing': 'En preparation',
+                    'shipped': 'En livraison',
+                    'delivering': 'En livraison',
+                    'delivered': 'Livree',
+                    'cancelled': 'Annulee'
+                },
+
+                init() {
+                    // Initialize statuses from the DOM data attributes
+                    document.querySelectorAll('[data-order-number]').forEach(el => {
+                        const orderNumber = el.getAttribute('data-order-number');
+                        const badge = el.querySelector('[data-initial-status]');
+                        if (badge) {
+                            this.statuses[orderNumber] = badge.getAttribute('data-initial-status');
+                            if (!this.orderNumbers.includes(orderNumber)) {
+                                this.orderNumbers.push(orderNumber);
+                            }
+                        }
+                    });
+                },
+
+                getStatusClasses(orderNumber) {
+                    const status = this.statuses[orderNumber];
+                    return this.statusColorMap[status] || 'bg-gray-100 text-gray-700 ring-gray-200';
+                },
+
+                getStatusLabel(orderNumber) {
+                    const status = this.statuses[orderNumber];
+                    return this.statusLabelMap[status] || status || '';
+                },
+
+                initEcho() {
+                    if (!window.Echo) return;
+
+                    // Listen to each order's channel
+                    this.orderNumbers.forEach(num => {
+                        window.Echo.channel('order.' + num)
+                            .listen('OrderStatusUpdated', (e) => {
+                                const orderNum = e.order_number;
+                                const prev = this.statuses[orderNum];
+
+                                if (prev && prev !== e.status) {
+                                    this.statuses[orderNum] = e.status;
+
+                                    // Flash animation on changed badges
+                                    this.$nextTick(() => {
+                                        document.querySelectorAll('[data-order-number="' + orderNum + '"] .order-status-badge').forEach(badge => {
+                                            badge.classList.remove('status-updated');
+                                            void badge.offsetWidth; // force reflow
+                                            badge.classList.add('status-updated');
+                                        });
+                                    });
+                                } else if (!prev) {
+                                    this.statuses[orderNum] = e.status;
+                                }
+                            });
+                    });
+                }
+            };
+        }
+    </script>
+    @endif
 
 @endsection

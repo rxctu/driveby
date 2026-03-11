@@ -159,11 +159,13 @@
                         </div>
 
                         {{-- Add to Cart Button --}}
-                        <button @click="adding = true; fetch('{{ route('cart.add') }}', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-                                    body: JSON.stringify({ product_id: {{ $product->id }}, quantity: quantity })
-                                }).then(r => r.json()).then(d => { adding = false; added = true; setTimeout(() => { added = false; location.reload(); }, 1500); }).catch(() => { adding = false; })"
+                        <button @click="
+                                    if (added) return;
+                                    adding = true;
+                                    addToCart({{ $product->id }}, quantity).then(() => {
+                                        adding = false; added = true;
+                                        setTimeout(() => { added = false; }, 2500);
+                                    }).catch(() => { adding = false; });"
                                 :disabled="adding || added"
                                 class="w-full py-4 rounded-2xl font-bold text-lg text-white transition-all duration-300 disabled:opacity-70 shadow-xl"
                                 :class="added ? 'bg-emerald-500 shadow-emerald-200' : 'bg-gradient-to-r from-emerald-600 to-teal-500 hover:shadow-2xl hover:shadow-emerald-200 hover:-translate-y-0.5 active:translate-y-0'">

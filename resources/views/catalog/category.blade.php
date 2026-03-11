@@ -110,11 +110,13 @@
 
                             {{-- Add to Cart Button --}}
                             @if(($product->stock ?? 0) > 0)
-                                <button @click.prevent="adding = true; fetch('{{ route('cart.add') }}', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-                                            body: JSON.stringify({ product_id: {{ $product->id }}, quantity: 1 })
-                                        }).then(r => r.json()).then(d => { adding = false; added = true; setTimeout(() => { added = false; location.reload(); }, 1200); }).catch(() => { adding = false; })"
+                                <button @click.prevent="
+                                            if (added) return;
+                                            adding = true;
+                                            addToCart({{ $product->id }}).then(() => {
+                                                adding = false; added = true;
+                                                setTimeout(() => { added = false; }, 2000);
+                                            }).catch(() => { adding = false; });"
                                         :disabled="adding || added"
                                         class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-200 active:scale-90 transition-all duration-200 disabled:opacity-60">
                                     <svg x-show="!adding && !added" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">

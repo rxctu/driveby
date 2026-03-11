@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -20,11 +23,16 @@ class Order extends Model
         'user_id',
         'order_number',
         'status',
+        'validation_code',
+        'validated_at',
         'customer_name',
         'customer_phone',
         'customer_address',
         'delivery_instructions',
         'delivery_fee',
+        'delivery_distance',
+        'promo_code',
+        'promo_discount',
         'subtotal',
         'total',
         'delivery_slot',
@@ -51,6 +59,7 @@ class Order extends Model
             'customer_phone' => 'encrypted',
             'customer_address' => 'encrypted',
             'delivery_instructions' => 'encrypted',
+            'validated_at' => 'datetime',
         ];
     }
 
@@ -80,5 +89,44 @@ class Order extends Model
         } while (static::where('order_number', $number)->exists());
 
         return $number;
+    }
+
+    /**
+     * Generate a unique 8-character validation code for pickup.
+     */
+    public static function generateValidationCode(): string
+    {
+        do {
+            $code = strtoupper(Str::random(8));
+        } while (static::where('validation_code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
+     * Get QR code as a base64 data URI for the validation code.
+     */
+    public function qrCodeDataUri(): ?string
+    {
+        if (! $this->validation_code) {
+            return null;
+        }
+
+        $options = new QROptions([
+            'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+            'scale' => 8,
+            'imageBase64' => true,
+            'quietzoneSize' => 2,
+        ]);
+
+        return (new QRCode($options))->render($this->validation_code);
+    }
+
+    /**
+     * Check if the order has been validated via QR/code.
+     */
+    public function isValidated(): bool
+    {
+        return $this->validated_at !== null;
     }
 }

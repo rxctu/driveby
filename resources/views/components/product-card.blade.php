@@ -62,7 +62,7 @@
                 :disabled="adding"
                 class="add-to-cart-btn w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer"
                 :class="added ? 'bg-emerald-500 text-white scale-110' : 'bg-emerald-700 text-white hover:bg-emerald-600'"
-                :aria-label="added ? 'Ajouté' : 'Ajouter {{ addslashes($product->name) }} au panier'"
+                :aria-label="added ? 'Ajouté' : 'Ajouter au panier'"
             >
                 {{-- Plus icon --}}
                 <svg x-show="!adding && !added" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,28 @@ class AccountController extends Controller
             ->firstOrFail();
 
         return view('account.order-detail', compact('user', 'order'));
+    }
+
+    /**
+     * AJAX endpoint: poll for live order status updates on the orders list page.
+     */
+    public function pollOrders(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $orders = Order::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get(['id', 'order_number', 'status', 'payment_status', 'updated_at']);
+
+        return response()->json([
+            'orders' => $orders->map(fn ($order) => [
+                'order_number' => $order->order_number,
+                'status' => $order->status,
+                'payment_status' => $order->payment_status,
+                'updated_at' => $order->updated_at->toISOString(),
+            ]),
+        ]);
     }
 
     public function updatePassword(Request $request): RedirectResponse

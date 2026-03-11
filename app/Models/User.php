@@ -27,6 +27,9 @@ class User extends Authenticatable
 
     protected $guarded = [
         'is_admin',
+        'trust_level',
+        'is_verified',
+        'admin_notes',
     ];
 
     /**
@@ -53,6 +56,8 @@ class User extends Authenticatable
             // RGPD: Encrypt PII at rest
             'phone' => 'encrypted',
             'address' => 'encrypted',
+            'trust_level' => 'integer',
+            'is_verified' => 'boolean',
         ];
     }
 
@@ -70,5 +75,45 @@ class User extends Authenticatable
     public function sharedLists(): HasMany
     {
         return $this->hasMany(SharedList::class);
+    }
+
+    /**
+     * Get trust level label.
+     */
+    public function trustBadge(): string
+    {
+        return match ($this->trust_level) {
+            0 => 'Nouveau',
+            1 => 'A surveiller',
+            2 => 'Normal',
+            3 => 'Fiable',
+            4 => 'Tres fiable',
+            5 => 'VIP',
+            default => 'Inconnu',
+        };
+    }
+
+    /**
+     * Get trust level color class.
+     */
+    public function trustColor(): string
+    {
+        return match ($this->trust_level) {
+            0 => 'bg-gray-100 text-gray-700',
+            1 => 'bg-red-100 text-red-700',
+            2 => 'bg-yellow-100 text-yellow-700',
+            3 => 'bg-blue-100 text-blue-700',
+            4 => 'bg-emerald-100 text-emerald-700',
+            5 => 'bg-purple-100 text-purple-700',
+            default => 'bg-gray-100 text-gray-600',
+        };
+    }
+
+    /**
+     * Check if this is a new customer (no completed orders).
+     */
+    public function isNewCustomer(): bool
+    {
+        return $this->trust_level === 0 && ! $this->is_verified;
     }
 }

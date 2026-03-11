@@ -53,6 +53,7 @@
                         <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
                         <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Commandes</th>
                         <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Inscription</th>
+                        <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Confiance</th>
                         <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Statut</th>
                         <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
                         <th class="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -76,6 +77,14 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-500 text-xs">{{ $user->created_at->format('d/m/Y') }}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold {{ $user->trustColor() }}">
+                                    {{ $user->trustBadge() }}
+                                </span>
+                                @if($user->is_verified)
+                                    <svg class="w-3.5 h-3.5 inline text-emerald-500 ml-0.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                @endif
+                            </td>
                             <td class="px-6 py-4">
                                 @if($user->is_active ?? true)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Actif</span>
@@ -117,7 +126,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-gray-400">Aucun utilisateur trouve</td>
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-400">Aucun utilisateur trouve</td>
                         </tr>
                     @endforelse
                 </tbody>

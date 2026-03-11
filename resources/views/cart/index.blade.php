@@ -108,8 +108,8 @@
                     @endforeach
                 </div>
 
-                {{-- Cart Summary --}}
-                <div class="mt-8 lg:mt-0">
+                {{-- Cart Summary (desktop only — mobile uses sticky CTA below) --}}
+                <div class="hidden lg:block mt-8 lg:mt-0">
                     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-24">
                         {{-- Gradient Header --}}
                         <div class="bg-gradient-to-r from-emerald-600 to-teal-500 px-6 py-4">
