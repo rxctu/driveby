@@ -119,14 +119,16 @@ RUN phpize \
 
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY docker/php/local.ini /usr/local/etc/php/conf.d/99-local.ini
 
-# Install Composer
+# Install Composer (before local.ini which sets open_basedir restrictions)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js
 # hadolint ignore=DL3018
 RUN apk add --no-cache nodejs npm
+
+# Copy PHP config (after composer install to avoid open_basedir blocking /usr/local/bin)
+COPY docker/php/local.ini /usr/local/etc/php/conf.d/99-local.ini
 
 # Create working directory
 WORKDIR /var/www

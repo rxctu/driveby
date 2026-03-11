@@ -1,5 +1,6 @@
 FROM alpine:3.21
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache \
     postgresql16 \
     postgresql16-client \
@@ -13,4 +14,5 @@ RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 5432
 
+USER postgres
 ENTRYPOINT ["/docker-entrypoint.sh"]
