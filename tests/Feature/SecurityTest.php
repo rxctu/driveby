@@ -26,7 +26,7 @@ class SecurityTest extends TestCase
     public function test_login_rate_limited(): void
     {
         for ($i = 0; $i < 6; $i++) {
-            $response = $this->post('/login', [
+            $response = $this->post('/connexion', [
                 'email' => 'fake@test.com',
                 'password' => 'wrongpassword',
             ]);
@@ -37,7 +37,7 @@ class SecurityTest extends TestCase
 
     public function test_registration_requires_privacy_consent(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post('/inscription', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'Password1!',
@@ -51,8 +51,7 @@ class SecurityTest extends TestCase
     {
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 
-        // Re-enable to test - this just verifies the middleware exists
-        $response = $this->post('/login', [
+        $response = $this->post('/connexion', [
             'email' => 'test@test.com',
             'password' => 'password',
         ]);
@@ -64,13 +63,13 @@ class SecurityTest extends TestCase
     public function test_admin_routes_require_authentication(): void
     {
         $response = $this->get('/admin');
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/connexion');
     }
 
     public function test_checkout_requires_authentication(): void
     {
-        $response = $this->get('/checkout');
-        // Should redirect to login or cart
+        $response = $this->get('/commande');
+        // Should redirect to login or cart (empty cart redirects to /panier)
         $this->assertContains($response->getStatusCode(), [302, 301]);
     }
 }

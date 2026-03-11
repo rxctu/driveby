@@ -17,19 +17,19 @@ class PageLoadTest extends TestCase
 
     public function test_login_page_loads(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get('/connexion');
         $response->assertStatus(200);
     }
 
     public function test_register_page_loads(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get('/inscription');
         $response->assertStatus(200);
     }
 
     public function test_cart_page_loads(): void
     {
-        $response = $this->get('/cart');
+        $response = $this->get('/panier');
         $response->assertStatus(200);
     }
 
