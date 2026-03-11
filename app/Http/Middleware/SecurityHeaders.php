@@ -38,7 +38,7 @@ class SecurityHeaders
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com",
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https:",
-            "connect-src 'self' https://api.stripe.com https://nominatim.openstreetmap.org {$wsScheme}://{$wsHost}",
+            "connect-src 'self' https://api.stripe.com https://nominatim.openstreetmap.org https://api-adresse.data.gouv.fr {$wsScheme}://{$wsHost}",
             'frame-src https://js.stripe.com https://hooks.stripe.com',
             "object-src 'none'",
             "base-uri 'self'",

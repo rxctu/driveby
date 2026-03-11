@@ -479,13 +479,17 @@
     <script>
         function addressAutocomplete() {
             let abortController = null;
+            // Store center: Ambert — results nearby ranked first
+            const storeLat = {{ $storeLat ?? 45.5495 }};
+            const storeLng = {{ $storeLng ?? 3.7428 }};
+
             return {
                 suggestions: [],
                 highlightIndex: -1,
                 searchLoading: false,
 
                 async searchAddress(query) {
-                    if (!query || query.length < 4) {
+                    if (!query || query.length < 3) {
                         this.suggestions = [];
                         return;
                     }
@@ -496,36 +500,37 @@
                     this.searchLoading = true;
 
                     try {
+                        // API Adresse (gouv.fr) — free, fast, proximity-biased
                         const params = new URLSearchParams({
                             q: query,
-                            format: 'json',
-                            addressdetails: '1',
                             limit: '6',
-                            countrycodes: 'fr',
-                            viewbox: '2.8,46.2,4.5,45.0',
-                            bounded: '0',
+                            lat: storeLat,
+                            lon: storeLng,
+                            type: 'housenumber',
                         });
-                        const res = await fetch('https://nominatim.openstreetmap.org/search?' + params, {
-                            headers: { 'Accept': 'application/json' },
+                        let res = await fetch('https://api-adresse.data.gouv.fr/search/?' + params, {
                             signal: abortController.signal
                         });
-                        const data = await res.json();
+                        let data = await res.json();
 
-                        this.suggestions = data
-                            .filter(r => r.address)
-                            .map(r => {
-                                const a = r.address;
-                                const street = [a.house_number, a.road].filter(Boolean).join(' ') || r.display_name.split(',')[0];
-                                const city = a.city || a.town || a.village || a.municipality || '';
-                                const postcode = a.postcode || '';
-                                return {
-                                    street,
-                                    city,
-                                    postcode,
-                                    context: [postcode, city].filter(Boolean).join(' '),
-                                    display_name: r.display_name
-                                };
+                        // If no housenumber results, retry with street type
+                        if (!data.features || data.features.length === 0) {
+                            params.set('type', 'street');
+                            res = await fetch('https://api-adresse.data.gouv.fr/search/?' + params, {
+                                signal: abortController.signal
                             });
+                            data = await res.json();
+                        }
+
+                        this.suggestions = (data.features || []).map(f => {
+                            const p = f.properties;
+                            return {
+                                street: p.name || '',
+                                city: p.city || '',
+                                postcode: p.postcode || '',
+                                context: p.postcode + ' ' + p.city + (p.context ? ' — ' + p.context : ''),
+                            };
+                        });
                         this.highlightIndex = -1;
                     } catch (e) {
                         if (e.name !== 'AbortError') this.suggestions = [];
@@ -539,15 +544,7 @@
                     document.getElementById('delivery_city').value = s.city;
                     document.getElementById('delivery_postal_code').value = s.postcode;
                     this.suggestions = [];
-
-                    // Trigger delivery calculation on parent checkoutForm
-                    const form = this.$el.closest('[x-data]');
-                    if (form && form.__x) {
-                        form.__x.$data.recalcDelivery?.();
-                    } else {
-                        // Alpine v3 — dispatch a custom event
-                        this.$dispatch('address-selected');
-                    }
+                    this.$dispatch('address-selected');
                 },
 
                 highlightNext() {
