@@ -141,16 +141,46 @@
             </table>
         </div>
 
-        {{-- Promo Banner Settings --}}
-        <div class="bg-white rounded-lg shadow">
+        {{-- Scrolling Banner (top of site) --}}
+        <div class="bg-white rounded-lg shadow mb-6">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Banniere promotionnelle</h3>
-                <p class="text-sm text-gray-500 mt-1">Configure l'apparence de la banniere promo sur la page d'accueil. Le texte de la promo est genere automatiquement depuis le code actif le plus recent.</p>
+                <h3 class="text-lg font-semibold text-gray-800">Bandeau defilant</h3>
+                <p class="text-sm text-gray-500 mt-1">Les annonces qui defilent en haut du site (visible sur toutes les pages)</p>
             </div>
 
             <form method="POST" action="{{ route('admin.promos.update-banner') }}" class="p-6 space-y-4">
                 @csrf
                 @method('PUT')
+
+                <div x-data="{
+                    banners: {{ Js::from($bannerTexts) }},
+                    addBanner() { this.banners.push({emoji: '', text: ''}); },
+                    removeBanner(index) { this.banners.splice(index, 1); }
+                }">
+                    <template x-for="(banner, index) in banners" :key="index">
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="text" :name="'banner_texts['+index+'][emoji]'" x-model="banner.emoji"
+                                   class="w-16 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="...">
+                            <input type="text" :name="'banner_texts['+index+'][text]'" x-model="banner.text"
+                                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Texte de l'annonce...">
+                            <button type="button" @click="removeBanner(index)" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Supprimer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </template>
+                    <button type="button" @click="addBanner()"
+                            class="mt-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        <span>Ajouter une annonce</span>
+                    </button>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <h4 class="text-base font-semibold text-gray-800 pt-2">Banniere promotionnelle</h4>
+                <p class="text-sm text-gray-500">La grande banniere coloree sur la page d'accueil. Le texte de la promo est genere automatiquement depuis le code actif le plus recent.</p>
 
                 <div class="flex items-center gap-4">
                     <input type="hidden" name="promo_enabled" value="0">

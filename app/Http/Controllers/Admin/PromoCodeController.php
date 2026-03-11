@@ -25,7 +25,13 @@ class PromoCodeController extends Controller
             'button_emoji' => Setting::getValue('promo_button_emoji', "\u{1F389}"),
         ];
 
-        return view('admin.promo-codes.index', compact('promoCodes', 'banner'));
+        $bannerTexts = json_decode(Setting::getValue('banner_texts', ''), true) ?: [
+            ['emoji' => "\u{1F680}", 'text' => 'Livraison en 30min dans votre quartier'],
+            ['emoji' => "\u{26A1}", 'text' => 'Livraison GRATUITE des 25EUR d\'achat'],
+            ['emoji' => "\u{1F6D2}", 'text' => '+ de 2000 produits disponibles'],
+        ];
+
+        return view('admin.promo-codes.index', compact('promoCodes', 'banner', 'bannerTexts'));
     }
 
     public function updateBanner(Request $request): RedirectResponse
@@ -37,6 +43,7 @@ class PromoCodeController extends Controller
             'promo_title' => 'nullable|string|max:200',
             'promo_button_text' => 'nullable|string|max:100',
             'promo_button_emoji' => 'nullable|string|max:10',
+            'banner_texts' => 'nullable|array',
         ]);
 
         Setting::setValue('promo_enabled', ($validated['promo_enabled'] ?? '0') ? '1' : '0');
@@ -46,7 +53,11 @@ class PromoCodeController extends Controller
         Setting::setValue('promo_button_text', $validated['promo_button_text'] ?? '');
         Setting::setValue('promo_button_emoji', $validated['promo_button_emoji'] ?? "\u{1F389}");
 
-        return back()->with('success', 'Banniere mise a jour.');
+        if (isset($validated['banner_texts'])) {
+            Setting::setValue('banner_texts', json_encode(array_values($validated['banner_texts'])));
+        }
+
+        return back()->with('success', 'Parametres promotionnels mis a jour.');
     }
 
     public function store(Request $request): JsonResponse
