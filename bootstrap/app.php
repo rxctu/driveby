@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust reverse proxy (host nginx -> docker)
+        $middleware->trustProxies(at: '*');
+
         // Global middleware - security headers on every response
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
