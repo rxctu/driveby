@@ -25,19 +25,20 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions policy - restrict browser features
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
+        $response->headers->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self), payment=(self)');
 
         // Content Security Policy
-        $nonce = base64_encode(random_bytes(16));
-        $response->headers->set('X-CSP-Nonce', $nonce);
+        $appUrl = config('app.url', 'https://epi.micferna.xyz');
+        $wsScheme = str_starts_with($appUrl, 'https') ? 'wss' : 'ws';
+        $wsHost = parse_url($appUrl, PHP_URL_HOST);
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com",
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https:",
-            "connect-src 'self' https://api.stripe.com ws://localhost:8085 wss://localhost:8085",
+            "connect-src 'self' https://api.stripe.com https://nominatim.openstreetmap.org {$wsScheme}://{$wsHost}",
             'frame-src https://js.stripe.com https://hooks.stripe.com',
             "object-src 'none'",
             "base-uri 'self'",
