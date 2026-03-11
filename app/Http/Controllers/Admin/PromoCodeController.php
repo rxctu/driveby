@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PromoCode;
+use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -14,7 +16,37 @@ class PromoCodeController extends Controller
     {
         $promoCodes = PromoCode::latest()->get();
 
-        return view('admin.promo-codes.index', compact('promoCodes'));
+        $banner = (object) [
+            'enabled' => Setting::getValue('promo_enabled', '1'),
+            'badge_emoji' => Setting::getValue('promo_badge_emoji', "\u{1F381}"),
+            'badge_text' => Setting::getValue('promo_badge_text', 'Offre speciale'),
+            'title' => Setting::getValue('promo_title', 'Premiere commande ?'),
+            'button_text' => Setting::getValue('promo_button_text', 'En profiter maintenant'),
+            'button_emoji' => Setting::getValue('promo_button_emoji', "\u{1F389}"),
+        ];
+
+        return view('admin.promo-codes.index', compact('promoCodes', 'banner'));
+    }
+
+    public function updateBanner(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'promo_enabled' => 'nullable|boolean',
+            'promo_badge_emoji' => 'nullable|string|max:10',
+            'promo_badge_text' => 'nullable|string|max:100',
+            'promo_title' => 'nullable|string|max:200',
+            'promo_button_text' => 'nullable|string|max:100',
+            'promo_button_emoji' => 'nullable|string|max:10',
+        ]);
+
+        Setting::setValue('promo_enabled', ($validated['promo_enabled'] ?? '0') ? '1' : '0');
+        Setting::setValue('promo_badge_emoji', $validated['promo_badge_emoji'] ?? "\u{1F381}");
+        Setting::setValue('promo_badge_text', $validated['promo_badge_text'] ?? '');
+        Setting::setValue('promo_title', $validated['promo_title'] ?? '');
+        Setting::setValue('promo_button_text', $validated['promo_button_text'] ?? '');
+        Setting::setValue('promo_button_emoji', $validated['promo_button_emoji'] ?? "\u{1F389}");
+
+        return back()->with('success', 'Banniere mise a jour.');
     }
 
     public function store(Request $request): JsonResponse

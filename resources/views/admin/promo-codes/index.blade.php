@@ -65,7 +65,7 @@
         </div>
 
         {{-- Promo Codes Table --}}
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -140,6 +140,85 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- Promo Banner Settings --}}
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Banniere promotionnelle</h3>
+                <p class="text-sm text-gray-500 mt-1">Configure l'apparence de la banniere promo sur la page d'accueil. Le texte de la promo est genere automatiquement depuis le code actif le plus recent.</p>
+            </div>
+
+            <form method="POST" action="{{ route('admin.promos.update-banner') }}" class="p-6 space-y-4">
+                @csrf
+                @method('PUT')
+
+                <div class="flex items-center gap-4">
+                    <input type="hidden" name="promo_enabled" value="0">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="promo_enabled" value="1"
+                               class="sr-only peer"
+                               {{ ($banner->enabled ?? '1') == '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                    <span class="text-sm font-medium text-gray-700">Afficher la banniere promo sur la page d'accueil</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Badge</label>
+                        <div class="flex gap-2">
+                            <input type="text" name="promo_badge_emoji" value="{{ $banner->badge_emoji ?? '' }}"
+                                   class="w-14 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-emerald-500 focus:border-emerald-500">
+                            <input type="text" name="promo_badge_text" value="{{ $banner->badge_text ?? 'Offre speciale' }}"
+                                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Offre speciale">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Titre principal</label>
+                        <input type="text" name="promo_title" value="{{ $banner->title ?? 'Premiere commande ?' }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                               placeholder="Premiere commande ?">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Texte du bouton</label>
+                        <input type="text" name="promo_button_text" value="{{ $banner->button_text ?? 'En profiter maintenant' }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                               placeholder="En profiter maintenant">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Emoji bouton</label>
+                        <input type="text" name="promo_button_emoji" value="{{ $banner->button_emoji ?? '' }}"
+                               class="w-14 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                </div>
+
+                @php
+                    $activePromo = $promoCodes->where('is_active', true)->first();
+                @endphp
+                <div class="p-3 rounded-lg {{ $activePromo ? 'bg-emerald-50 border border-emerald-200' : 'bg-amber-50 border border-amber-200' }}">
+                    @if($activePromo)
+                        <p class="text-sm text-emerald-700">
+                            <span class="font-bold">Texte auto-genere :</span>
+                            {{ $activePromo->getLabel() }} avec le code <span class="font-mono font-bold">{{ $activePromo->code }}</span>
+                        </p>
+                    @else
+                        <p class="text-sm text-amber-700 font-medium">
+                            Aucun code promo actif. Creez-en un ci-dessus pour que la banniere affiche automatiquement la reduction.
+                        </p>
+                    @endif
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+                        Enregistrer la banniere
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -199,7 +278,6 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
                         }
                     });
-                    // Toggle active state via Alpine
                     const scope = Alpine.$data(el.closest('tr'));
                     scope.active = !scope.active;
                 },

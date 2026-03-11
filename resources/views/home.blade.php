@@ -229,11 +229,18 @@
         $promoBadgeEmoji = \App\Models\Setting::getValue('promo_badge_emoji', '🎁');
         $promoBadgeText = \App\Models\Setting::getValue('promo_badge_text', 'Offre spéciale');
         $promoTitle = \App\Models\Setting::getValue('promo_title', 'Première commande ?');
-        $promoText = \App\Models\Setting::getValue('promo_text', '-20% avec le code BIENVENUE');
         $promoButtonText = \App\Models\Setting::getValue('promo_button_text', 'En profiter maintenant');
         $promoButtonEmoji = \App\Models\Setting::getValue('promo_button_emoji', '🎉');
+        // Auto-generate promo text from most recent active promo code
+        $activePromo = \App\Models\PromoCode::where('is_active', true)
+            ->where(fn($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>=', now()))
+            ->where(fn($q) => $q->whereNull('max_uses')->orWhereColumn('used_count', '<', 'max_uses'))
+            ->latest()->first();
+        $promoText = $activePromo
+            ? $activePromo->getLabel() . ' avec le code ' . $activePromo->code
+            : null;
     @endphp
-    @if($promoEnabled)
+    @if($promoEnabled && $promoText)
     <section class="relative overflow-hidden"
              x-data="{ shown: false }" x-intersect.once="shown = true">
         <div class="bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 animate-gradient py-12 sm:py-16"

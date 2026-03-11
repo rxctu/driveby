@@ -143,63 +143,6 @@
                     </div>
                 </div>
 
-                {{-- Promo Banner --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Banniere promotionnelle (page d'accueil)</label>
-                    <div class="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="flex items-center gap-4">
-                            <input type="hidden" name="promo_enabled" value="0">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="promo_enabled" value="1"
-                                       class="sr-only peer"
-                                       {{ old('promo_enabled', $settings->promo_enabled ?? '1') == '1' ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                            </label>
-                            <span class="text-sm font-medium text-gray-700">Afficher la banniere promo</span>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Badge (ex: "Offre speciale")</label>
-                                <div class="flex gap-2">
-                                    <input type="text" name="promo_badge_emoji" value="{{ old('promo_badge_emoji', $settings->promo_badge_emoji ?? '🎁') }}"
-                                           class="w-14 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-green-500 focus:border-green-500">
-                                    <input type="text" name="promo_badge_text" value="{{ old('promo_badge_text', $settings->promo_badge_text ?? 'Offre spéciale') }}"
-                                           class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500"
-                                           placeholder="Offre speciale">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Titre principal</label>
-                                <input type="text" name="promo_title" value="{{ old('promo_title', $settings->promo_title ?? 'Première commande ?') }}"
-                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500"
-                                       placeholder="Premiere commande ?">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Texte promo (le code sera mis en surbrillance)</label>
-                            <input type="text" name="promo_text" value="{{ old('promo_text', $settings->promo_text ?? '-20% avec le code BIENVENUE') }}"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500"
-                                   placeholder="-20% avec le code BIENVENUE">
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Texte du bouton</label>
-                                <input type="text" name="promo_button_text" value="{{ old('promo_button_text', $settings->promo_button_text ?? 'En profiter maintenant') }}"
-                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-green-500 focus:border-green-500"
-                                       placeholder="En profiter maintenant">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Emoji bouton</label>
-                                <input type="text" name="promo_button_emoji" value="{{ old('promo_button_emoji', $settings->promo_button_emoji ?? '🎉') }}"
-                                       class="w-14 border border-gray-300 rounded-lg px-2 py-2 text-center text-lg focus:ring-green-500 focus:border-green-500">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- Online Payments toggle --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-3">Paiement en ligne</label>

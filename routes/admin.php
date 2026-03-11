@@ -73,6 +73,7 @@ Route::delete('inventaire/mapping/{mapping}', [InventoryController::class, 'dele
 // Promo codes
 Route::get('promos', [PromoCodeController::class, 'index'])->name('promos.index');
 Route::post('promos', [PromoCodeController::class, 'store'])->name('promos.store');
+Route::put('promos/banner', [PromoCodeController::class, 'updateBanner'])->name('promos.update-banner');
 Route::post('promos/{promoCode}/toggle', [PromoCodeController::class, 'toggle'])->name('promos.toggle');
 Route::delete('promos/{promoCode}', [PromoCodeController::class, 'destroy'])->name('promos.destroy');
 

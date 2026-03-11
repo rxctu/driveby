@@ -26,13 +26,6 @@ class SettingController extends Controller
             ],
             'online_payments_enabled' => Setting::getValue('online_payments_enabled', '1'),
             'partner_cta_enabled' => Setting::getValue('partner_cta_enabled', '1'),
-            'promo_enabled' => Setting::getValue('promo_enabled', '1'),
-            'promo_badge_emoji' => Setting::getValue('promo_badge_emoji', '🎁'),
-            'promo_badge_text' => Setting::getValue('promo_badge_text', 'Offre spéciale'),
-            'promo_title' => Setting::getValue('promo_title', 'Première commande ?'),
-            'promo_text' => Setting::getValue('promo_text', '-20% avec le code BIENVENUE'),
-            'promo_button_text' => Setting::getValue('promo_button_text', 'En profiter maintenant'),
-            'promo_button_emoji' => Setting::getValue('promo_button_emoji', '🎉'),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -49,13 +42,6 @@ class SettingController extends Controller
             'banner_texts' => 'nullable|array',
             'online_payments_enabled' => 'nullable|boolean',
             'partner_cta_enabled' => 'nullable|boolean',
-            'promo_enabled' => 'nullable|boolean',
-            'promo_badge_emoji' => 'nullable|string|max:10',
-            'promo_badge_text' => 'nullable|string|max:100',
-            'promo_title' => 'nullable|string|max:200',
-            'promo_text' => 'nullable|string|max:300',
-            'promo_button_text' => 'nullable|string|max:100',
-            'promo_button_emoji' => 'nullable|string|max:10',
         ]);
 
         Setting::setValue('store_name', $validated['store_name']);
@@ -73,14 +59,6 @@ class SettingController extends Controller
 
         Setting::setValue('online_payments_enabled', ($validated['online_payments_enabled'] ?? '0') ? '1' : '0');
         Setting::setValue('partner_cta_enabled', ($validated['partner_cta_enabled'] ?? '0') ? '1' : '0');
-
-        Setting::setValue('promo_enabled', ($validated['promo_enabled'] ?? '0') ? '1' : '0');
-        Setting::setValue('promo_badge_emoji', $validated['promo_badge_emoji'] ?? '🎁');
-        Setting::setValue('promo_badge_text', $validated['promo_badge_text'] ?? '');
-        Setting::setValue('promo_title', $validated['promo_title'] ?? '');
-        Setting::setValue('promo_text', $validated['promo_text'] ?? '');
-        Setting::setValue('promo_button_text', $validated['promo_button_text'] ?? '');
-        Setting::setValue('promo_button_emoji', $validated['promo_button_emoji'] ?? '🎉');
 
         return back()->with('success', 'Parametres mis a jour avec succes.');
     }
