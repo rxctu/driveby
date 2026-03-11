@@ -9,6 +9,8 @@
 
     <title>@yield('title', 'EpiDrive - Épicerie en ligne, livraison à domicile')</title>
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+
     {{-- Canonical URL --}}
     <link rel="canonical" href="{{ url()->current() }}">
 
